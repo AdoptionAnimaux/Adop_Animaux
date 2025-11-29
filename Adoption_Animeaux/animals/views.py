@@ -36,7 +36,9 @@ class AnimalCreateView(LoginRequiredMixin, AdminRequired, CreateView):
 # 🔹 Modifier animal (Admin)
 class AnimalUpdateView(LoginRequiredMixin, AdminRequired, UpdateView):
     model = Animal
-    form_class = AnimalForm
+    form_class = AnimalFor
+    
+    
     template_name = 'animals/form.html'
     success_url = reverse_lazy('animals:list')
 
