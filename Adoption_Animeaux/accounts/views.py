@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 
 from .forms import RegisterForm
 from .models import UserProfile
@@ -30,21 +31,18 @@ def register(request):
 
     return render(request, "accounts/register.html", {"form": form})
 
+from services.consul_client import get_service_url
+
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-
-    form = AuthenticationForm()
-
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+    if request.method == "POST":
+        user = authenticate(...)
+        if user:
             login(request, user)
-            return redirect('home')
 
-    return render(request, 'accounts/login.html', {'form': form})
+            url = get_service_url("adoption-service") + "/animals/"
+            return redirect(url)
 
+    return render(request, "login.html")
 
 def logout_view(request):
     if request.method == "POST":

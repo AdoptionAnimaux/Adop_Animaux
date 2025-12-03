@@ -17,19 +17,19 @@
         </div>
 
         <nav class="main-nav">
-            <ul class="nav-list">
-                <li><a href="/">Accueil</a></li>
-                <li><a href="{% url 'animals:list' %}">Animaux</a></li>
+    <ul class="nav-list">
+        <li><a href="/">Accueil</a></li>
 
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'animals:add' %}">Ajouter un animal</a></li>
-                    <li><a href="{% url 'logout' %}">Se déconnecter</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="btn-primary">Connexion</a></li>
-                    <li><a href="{% url 'register' %}" class="btn-primary">Inscription</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'animals:list' %}">Animaux</a></li>
+            <li><a href="{% url 'animals:add' %}">Ajouter un animal</a></li>
+            <li><a href="{% url 'logout' %}">Se déconnecter</a></li>
+        {% else %}
+            <li><a href="{% url 'login' %}" class="btn-primary">Connexion</a></li>
+            <li><a href="{% url 'register' %}" class="btn-primary">Inscription</a></li>
+        {% endif %}
+    </ul>
+</nav>
 
     </div>
 </header>
