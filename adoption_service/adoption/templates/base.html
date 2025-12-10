@@ -35,12 +35,43 @@
 
     <a class="navbar-brand" href="#">Animal Adoption</a>
 
-    <!-- MENU HORIZONTAL 🌟 -->
-    <ul class="navbar-nav menu-horizontal">
-      <li class="nav-item"><a class="nav-link" href="/prendre/">Rendez-vous</a></li>
-      <li class="nav-item"><a class="nav-link" href="/adoption/create/">Adoption</a></li>
-      <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
-    </ul>
+    <ul class="navbar-nav ms-auto">
+
+    {% if user.is_authenticated %}
+        
+        <!-- CLIENT MENU -->
+        <li class="nav-item">
+            <a class="nav-link" href="/adoption/create/">Apply</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/adoption/list/{{ user.id }}/">My Requests</a>
+        </li>
+
+
+        <!-- ADMIN MENU (only visible if user.is_staff == True) -->
+        {% if user.is_staff %}
+        <li class="nav-item">
+            <a class="nav-link" href="/adoption/admin/requests/">Admin Panel</a>
+        </li>
+        {% endif %}
+
+        <!-- LOGOUT -->
+        <li class="nav-item">
+            <a class="nav-link" href="/logout/">Logout</a>
+        </li>
+
+    {% else %}
+
+        <!-- VISITOR MENU -->
+        <li class="nav-item">
+            <a class="nav-link" href="/login/">Login</a>
+        </li>
+
+    {% endif %}
+
+</ul>
+
 
   </div>
 </nav>
