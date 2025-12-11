@@ -12,15 +12,16 @@ urlpatterns = [
     path("admin/manage/", views.admin_manage_animals, name="admin_manage_animals"),
     path("admin/pending/", views.admin_pending, name="admin_pending"),
 
+    # Admin animal actions
+    path("admin/delete/<int:pk>/", views.admin_delete_animal, name="admin_delete_animal"),
+    path("admin/edit/<int:pk>/", views.admin_edit_animal, name="admin_edit_animal"),
+
     # API
     path("api/animals/", views.AnimalListCreateAPI.as_view(), name="api_animals"),
     path("api/animals/<int:pk>/", views.AnimalRetrieveUpdateDestroyAPI.as_view()),
-path(
-    "api/animals/<int:pk>/adopt/",
-    views.request_adoption_api,
-    name="api_animal_adopt"
-),
-    # Admin actions
+    path("api/animals/<int:pk>/adopt/", views.request_adoption_api, name="api_animal_adopt"),
+
+    # Admin API
     path("api/admin/animals/<int:pk>/approve/", views.approve_animal_api),
     path("api/admin/animals/<int:pk>/reject/", views.reject_animal_api),
 ]

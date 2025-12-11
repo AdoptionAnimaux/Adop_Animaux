@@ -189,3 +189,22 @@ def reject_animal_api(request, pk):
     animal = get_object_or_404(Animal, pk=pk)
     animal.delete()
     return redirect("admin_pending")
+
+def admin_delete_animal(request, pk):
+    animal = get_object_or_404(Animal, id=pk)
+    animal.delete()
+    return redirect('admin_manage_animals')
+
+
+def admin_edit_animal(request, pk):
+    animal = get_object_or_404(Animal, id=pk)
+
+    if request.method == "POST":
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_manage_animals')
+    else:
+        form = AnimalForm(instance=animal)
+
+    return render(request, "animals/admin_edit.html", {"form": form, "animal": animal})

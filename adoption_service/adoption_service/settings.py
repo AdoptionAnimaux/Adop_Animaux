@@ -56,7 +56,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-       'DIRS': [],  
+       'DIRS': [            BASE_DIR / "../ui_service/templates",
+],  
         'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
@@ -117,7 +118,14 @@ from pathlib import Path
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "../ui_service/static",  # shared UI files
+    BASE_DIR / "static",                # local microservice static
+]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 RABBITMQ = {
 'HOST': os.environ.get('RABBITMQ_HOST', 'rabbitmq'),
 'PORT': int(os.environ.get('RABBITMQ_PORT', 5672)),
