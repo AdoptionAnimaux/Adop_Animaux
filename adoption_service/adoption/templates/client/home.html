@@ -4,23 +4,18 @@
 
 {% block content %}
 
-<div class="text-center">
+<div class="home-wrapper">
 
-    <h1 class="mb-4">🐾 Adoption Service</h1>
-    <p class="lead mb-5">
-        Bienvenue dans le microservice d’adoption des animaux.<br>
-        Ici, vous pouvez créer une demande ou consulter vos demandes existantes.
+    <h1 class="home-title">Find a Friend ❤️</h1>
+
+    <p class="home-subtitle">
+        Bienvenue dans le microservice d’adoption.<br>
+        Choisissez un animal et envoyez une demande !
     </p>
 
-    <div class="d-flex justify-content-center gap-3">
-
-        <a href="/adoption/create/" class="btn btn-primary btn-lg">Apply for adoption</a>
-
-
-        <a href="/adoption/list/1/" class="btn btn-success btn-lg">
-            📄 Voir mes demandes
-        </a>
-
+    <div class="home-actions">
+        <a href="/adoption/create/" class="btn-main">🐾 Apply for Adoption</a>
+        <a href="/adoption/list/1/" class="btn-secondary">📄 Voir mes demandes</a>
     </div>
 
 </div>

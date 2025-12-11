@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - adop_network
+
+  adoption_service:
+    build: ./adoption_service
+    ports:
+      - "8003:8000"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+    networks:
+      - adop_network
+
+  notifications_service:
+    build: ./notifications_service
+    container_name: notifications_service
+    ports:
+      - "8005:8000"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+    networks:
+      - adop_network
+
+networks:
+  adop_network:
+    driver: bridge

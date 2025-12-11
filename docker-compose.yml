@@ -73,16 +73,16 @@ services:
       - web
 
   appointments-service:
-    build: ./appointments_service
-    container_name: appointments-service
+    build: ./notifications_service
+    container_name: notifications-service
     depends_on:
       - rabbitmq
       - consul
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.appointments.rule=Host(`appointments.localhost`)"
-      - "traefik.http.routers.appointments.entrypoints=web"
-      - "traefik.http.services.appointments.loadbalancer.server.port=8004"
+      - "traefik.http.routers.notifications.rule=Host(`notifications.localhost`)"
+      - "traefik.http.routers.notifications.entrypoints=web"
+      - "traefik.http.services.notifications.loadbalancer.server.port=8004"
     networks:
       - web
 

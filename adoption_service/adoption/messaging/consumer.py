@@ -1,17 +1,19 @@
 import json
 from .connection import get_connection
 
-QUEUE_NAME = "adoption_queue"
+QUEUE_NAME = "adoption_queue"   # IMPORTANT : même nom que dans producer.py
 
 def callback(ch, method, properties, body):
     message = json.loads(body)
-    print("[ADOPTION] 📥 message reçu :", message)
+    print("[📥 Notification reçue] :", message)
 
 def start_consumer():
-    _, channel = get_connection()
+    connection, channel = get_connection()
+
+    # Déclare la queue (doit être identique à adoption-service)
     channel.queue_declare(queue=QUEUE_NAME, durable=True)
 
-    print("[ADOPTION] 🎧 En attente de messages...")
+    print("[Consumer] Waiting for messages...")
 
     channel.basic_consume(
         queue=QUEUE_NAME,
