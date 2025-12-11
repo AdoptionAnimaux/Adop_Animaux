@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Success — Adoption{% endblock %}
+
+{% block content %}
+
+<div class="text-center">
+
+    <h1 class="text-success mb-4">🎉 Adoption Request Sent!</h1>
+
+    <p class="lead">
+        Your adoption request has been submitted successfully.<br>
+        Request ID: <strong>{{ request.id }}</strong>
+    </p>
+
+    <div class="mt-4">
+        <a href="/adoption/list/{{ request.user_id }}/" class="btn btn-primary btn-lg">
+            📄 View My Requests
+        </a>
+
+        <a href="/" class="btn btn-secondary btn-lg">
+            ⬅ Back Home
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

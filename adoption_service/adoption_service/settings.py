@@ -146,3 +146,9 @@ REST_FRAMEWORK = {
   'rest_framework.renderers.JSONRenderer',
 ),
 }
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "adoption" / "static",
+]

@@ -1,24 +1,25 @@
 import requests
 from django.http import JsonResponse
+from django.shortcuts import render, redirect
+
 from .models import AdoptionRequest
 from adoption_service.utils import get_service_url
-from django.shortcuts import render
-from django.http import HttpResponse
 from adoption.messaging.producer import publish_adoption
-from django.shortcuts import redirect
 
-from adoption_service.utils import get_service_url
-import requests
+
+# -------------------------------------------------------------------
+# HOME PAGE
+# -------------------------------------------------------------------
 def home(request):
-    return HttpResponse("<h1>Bienvenue dans Adoption-Service</h1>")
-def home(request):
-    return render(request, "home.html")
-# ▶️ 1. Créer une demande d’adoption
+    return render(request, "client/home.html")
 
 
+# -------------------------------------------------------------------
+# CREATE ADOPTION REQUEST
+# -------------------------------------------------------------------
 def create_request(request):
     if request.method == "GET":
-        return render(request, "form_adoption.html")
+        return render(request, "client/form_adoption.html")
 
     if request.method == "POST":
         user_id = request.POST.get("user_id")
@@ -26,8 +27,8 @@ def create_request(request):
         appointment_id = request.POST.get("appointment_id")
 
         if not user_id or not animal_id:
-            return render(request, "form_adoption.html", {
-                "error": "User ID et Animal ID sont obligatoires."
+            return render(request, "client/form_adoption.html", {
+                "error": "User ID and Animal ID are required."
             })
 
         req = AdoptionRequest.objects.create(
@@ -37,17 +38,20 @@ def create_request(request):
             status="pending"
         )
 
-        return render(request, "success_adoption.html", {
-            "request": req
-        })
+        return render(request, "client/success_adoption.html", {"request": req})
 
 
+# -------------------------------------------------------------------
+# LIST USER REQUESTS
+# -------------------------------------------------------------------
 def user_requests(request, user_id):
     reqs = AdoptionRequest.objects.filter(user_id=user_id).order_by("-date_requested")
-    return render(request, "liste_adoptions.html", {"reqs": reqs})
+    return render(request, "client/liste_adoptions.html", {"reqs": reqs})
 
 
-# ▶️ 2. Voir le statut
+# -------------------------------------------------------------------
+# REQUEST STATUS (API)
+# -------------------------------------------------------------------
 def request_status(request, id):
     try:
         req = AdoptionRequest.objects.get(id=id)
@@ -62,80 +66,114 @@ def request_status(request, id):
         return JsonResponse({"error": "Not found"}, status=404)
 
 
-
-
-def reject_request(request, id):
-    try:
-        req = AdoptionRequest.objects.get(id=id)
-
-        req.status = "rejected"
-        req.save()
-
-        # 📩 envoyer un message RabbitMQ
-        publish_adoption({
-            "event": "adoption_rejected",
-            "request_id": req.id,
-            "user_id": req.user_id,
-            "animal_id": req.animal_id
-        })
-
-        return JsonResponse({"success": True})
-
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Demande introuvable"}, status=404)
-
+# -------------------------------------------------------------------
+# CANCEL REQUEST
+# -------------------------------------------------------------------
 def cancel_request(request, id):
     try:
         req = AdoptionRequest.objects.get(id=id)
 
         if req.status != "pending":
-            return JsonResponse({"error": "Impossible d'annuler une demande déjà traitée"}, status=400)
+            return JsonResponse({"error": "Cannot cancel a processed request"}, status=400)
 
         req.status = "cancelled"
         req.save()
-        return JsonResponse({"success": True, "message": "Demande annulée"})
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Demande introuvable"}, status=404)
+        return JsonResponse({"success": True})
 
+    except AdoptionRequest.DoesNotExist:
+        return JsonResponse({"error": "Request not found"}, status=404)
+
+
+# -------------------------------------------------------------------
+# ADMIN LIST
+# -------------------------------------------------------------------
 def admin_list(request):
     reqs = AdoptionRequest.objects.all().order_by("-date_requested")
-    return render(request, "admin_list.html", {"reqs": reqs})
+    return render(request, "admin/admin_list.html", {"reqs": reqs})
 
+
+# -------------------------------------------------------------------
+# APPROVE REQUEST (FIXED)
+# -------------------------------------------------------------------
 def approve_request(request, id):
     try:
         req = AdoptionRequest.objects.get(id=id)
-
         req.status = "approved"
         req.save()
 
-        # 📩 Envoyer un message RabbitMQ
-        publish_adoption({
-            "event": "adoption_approved",
-            "user_id": req.user_id,
-            "animal_id": req.animal_id,
-            "request_id": req.id
-        })
+        # Try sending event but DO NOT BREAK if RabbitMQ fails
+        try:
+           publish_adoption({
+             "event": "adoption_approved",
+             "request_id": req.id,
+             "user_id": req.user_id,
+             "animal_id": req.animal_id
+            })
+           print("🔔 Approve request triggered for ID:", req.id)
+
+        except Exception as e:
+            print("⚠ RabbitMQ ERROR on approve:", e)
 
         return redirect("/adoption/admin/requests/")
 
     except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Demande introuvable"}, status=404)
-    
+        return JsonResponse({"error": "Request not found"}, status=404)
+
+
+# -------------------------------------------------------------------
+# REJECT REQUEST (FIXED)
+# -------------------------------------------------------------------
 def reject_request(request, id):
     try:
         req = AdoptionRequest.objects.get(id=id)
-
         req.status = "rejected"
         req.save()
 
-        # Notifier le client
-        send_notification("notifications", {
-            "type": "adoption_rejected",
-            "user_id": req.user_id,
-            "animal_id": req.animal_id
-        })
+        # Try sending event but DO NOT BREAK if RabbitMQ fails
+        try:
+            publish_adoption({
+                "event": "adoption_rejected",
+                "request_id": req.id,
+                "user_id": req.user_id,
+                "animal_id": req.animal_id
+            })
+        except Exception as e:
+            print("⚠ RabbitMQ ERROR on reject:", e)
 
-        return JsonResponse({"success": True})
+        return redirect("/adoption/admin/requests/")
 
     except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Demande introuvable"}, status=404)      
+        return JsonResponse({"error": "Request not found"}, status=404)
+
+
+# -------------------------------------------------------------------
+# API: CHECK ADOPTION
+# -------------------------------------------------------------------
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(["GET"])
+def check_adoption(request, user_id, animal_id):
+    try:
+        req = AdoptionRequest.objects.filter(
+            user_id=user_id,
+            animal_id=animal_id
+        ).latest("date_requested")
+
+        return Response({"status": req.status})
+    except AdoptionRequest.DoesNotExist:
+        return Response({"status": "none"}, status=404)
+    
+    
+
+from adoption_service.utils import get_service_url
+
+def go_to_notifications(request, user_id):
+    # 1. Obtenir l’URL du microservice via Consul
+    notif_url = get_service_url("notifications-service")
+
+    if notif_url is None:
+        return JsonResponse({"error": "Notifications service not found in Consul"}, status=500)
+
+    # 2. Rediriger vers notifications-service
+    return redirect(f"{notif_url}/notifications/user/{user_id}/")
