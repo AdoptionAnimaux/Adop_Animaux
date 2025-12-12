@@ -24,21 +24,30 @@ def home(request):
 # CREATE ADOPTION REQUEST
 # -------------------------------------------------------------------
 def create_request(request):
+    # GET: open form with prefilled animal_id
     if request.method == "GET":
-        return render(request, "client/form_adoption.html")
+        animal_id = request.GET.get("animal_id")
 
+        return render(request, "client/form_adoption.html", {
+            "animal_id": animal_id
+        })
+
+    # POST: submit adoption
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         animal_id = request.POST.get("animal_id")
+        appointment_id = request.POST.get("appointment_id")
 
         if not user_id or not animal_id:
-            return render(request, "client/form_adoption.html", {
-                "error": "User ID and Animal ID are required."
+            return render(request, "form_adoption.html", {
+                "error": "User ID and Animal ID are required",
+                "animal_id": animal_id
             })
 
         req = AdoptionRequest.objects.create(
-            user_id=int(user_id),
-            animal_id=int(animal_id),
+            user_id=user_id,
+            animal_id=animal_id,
+            appointment_id=appointment_id or None,
             status="pending"
         )
 
