@@ -38,3 +38,4 @@ def send_animal_event(event_type, data):
     except Exception as e:
         print(f"Error sending RabbitMQ message: {e}")
         return False
+    

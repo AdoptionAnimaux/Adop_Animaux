@@ -46,6 +46,8 @@ body {
 }
 
 /* ================= NAVBAR ================= */
+/* ================= NAVBAR ONLY (ISOLATED) ================= */
+
 .navbar {
     position: sticky;
     top: 0;
@@ -55,64 +57,86 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    padding: 14px 42px;
-    backdrop-filter: blur(16px);
+    padding: 16px 42px;
+
+    /* Dark warm glass */
     background: linear-gradient(
         90deg,
-        rgba(255,255,255,0.75),
-        rgba(237,224,212,0.75)
+        rgba(65, 72, 51, 0.88),
+        rgba(127, 85, 57, 0.82)
     );
 
-    border-bottom: 1px solid rgba(127,85,57,0.2);
-    box-shadow: 0 6px 28px rgba(0,0,0,0.12);
+    backdrop-filter: blur(18px);
+
+    /* Rounded navbar shape */
+    border-radius: 0 0 26px 26px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 12px 32px rgba(0,0,0,0.35),
+        inset 0 -1px 0 rgba(255,255,255,0.06);
 }
 
-.brand {
+/* Brand — scoped */
+.navbar .brand {
     font-size: 20px;
     font-weight: 600;
-    color: var(--brown);
+    color: #F5EFE8;
     text-decoration: none;
 }
 
-/* Nav links */
-.nav-right {
+/* Right container — scoped */
+.navbar .nav-right {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 22px;
 }
 
+/* Links — scoped */
 .navbar a {
-    text-decoration: none;
     font-size: 14px;
     font-weight: 500;
-    color: rgba(65,72,51,0.85);
-    padding: 6px 10px;
-    border-radius: 10px;
-    transition: 0.2s ease;
+    text-decoration: none;
+
+    color: rgba(245, 239, 232, 0.92);
+
+    padding: 8px 14px;
+    border-radius: 999px;
+
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
+/* Hover — scoped */
 .navbar a:hover {
-    background: rgba(127,85,57,0.12);
-    color: var(--brown);
+    background: rgba(255,255,255,0.14);
+    color: #FFFFFF;
 }
 
-/* Notification icon */
-.nav-notification {
+/* Notification icon — scoped */
+.navbar .nav-notification {
     position: relative;
     font-size: 18px;
 }
 
-.nav-notification span {
+/* Notification badge — scoped */
+.navbar .nav-notification span {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    background: var(--brown);
-    color: white;
+    top: -7px;
+    right: -9px;
+
+    background: #EDE0D4;
+    color: #414833;
+
     font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
+    font-weight: 700;
+
+    padding: 3px 7px;
     border-radius: 999px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
 }
+
 
 /* ================= MAIN ================= */
 main {
@@ -170,22 +194,25 @@ main {
 <!-- ================= NAVBAR ================= -->
 <nav class="navbar">
     <div class="nav-left">
-        <a href="http://frontend-service/" class="brand">🐾 Adoption Animaux</a>
+        <a href="http://127.0.0.1:8001/" class="brand">🐾 Adoption Animaux</a>
     </div>
 
     <div class="nav-right">
-        <!-- animals_service -->
-        <a href="http://animals-service/">Animaux</a>
-
+                <a href="http://127.0.0.1:8002/">Catalogue 🐾</a>
         <!-- accounts_service -->
-        <a href="http://accounts-service/profile/">Mon compte</a>
+        <a href="http://127.0.0.1:8001/api/accounts/home/">Mon compte</a>
 
         <!-- adoption_service -->
-        <a href="http://adoption-service/my/">Mes adoptions</a>
+        <a href="http://127.0.0.1:8003/adoption/list/1/">Mes adoptions</a>
 
         <!-- notifications (adoption_service) -->
-        <a href="http://127.0.0.1:8003/notifications/">
-            🔔 Notifications
+        <a href="http://127.0.0.1:8004/notifications/user/{{ request.user.id }}/"
+           class="nav-notification"
+           title="My notifications">
+            🔔
+            {% if notifications_count %}
+                <span>{{ notifications_count }}</span>
+            {% endif %}
         </a>
 
         <a href="#about-section">À propos</a>

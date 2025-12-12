@@ -11,10 +11,13 @@ urlpatterns = [
     path("admin/", views.admin_dashboard, name="admin_dashboard"),
     path("admin/manage/", views.admin_manage_animals, name="admin_manage_animals"),
     path("admin/pending/", views.admin_pending, name="admin_pending"),
+    path("api/animals/<int:pk>/adopted/", views.mark_animal_adopted),
 
     # Admin animal actions
     path("admin/delete/<int:pk>/", views.admin_delete_animal, name="admin_delete_animal"),
     path("admin/edit/<int:pk>/", views.admin_edit_animal, name="admin_edit_animal"),
+    path("admin/add/", views.admin_add_animal, name="admin_add_animal"),
+
 
     # API
     path("api/animals/", views.AnimalListCreateAPI.as_view(), name="api_animals"),

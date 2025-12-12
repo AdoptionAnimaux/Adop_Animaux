@@ -5,97 +5,121 @@
 
 {% block content %}
 <style>
+/* ================= ADMIN-LIKE THEME ================= */
+:root {
+    --brown: #7F5539;
+    --light-brown: #A68A64;
+    --cream: #EDE0D4;
+    --olive: #656D4A;
+    --dark-olive: #414833;
+    --muted-olive: rgba(101, 109, 74, 0.8);
+    --shadow-soft: 0 18px 45px rgba(33, 37, 26, 0.18);
+    --transition: all 0.25s ease;
+}
 
 /* ====== PAGE LAYOUT ====== */
 .catalog-container {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 24px;
+    grid-template-columns: auto 1fr;
+    gap: 26px;
+    align-items: start;   /* 🔥 prevents vertical stretch */
 }
 
-/* ====== FLOATING GLASS EFFECT ====== */
-.glass {
-    background: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(14px);
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* ====== FILTER PANEL ====== */
+/* ====== FILTER PANEL (ADMIN STYLE) ====== */
 .filter-panel {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.30);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.45);
-    backdrop-filter: blur(18px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 22px;
+    width: 280px;
+
+    background: radial-gradient(circle at top left,
+        rgba(253, 250, 245, 0.96),
+        rgba(237, 224, 212, 0.92));
+
+    border-radius: 24px;
+    border: 1px solid rgba(127, 85, 57, 0.18);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-soft);
+
     position: sticky;
     top: 90px;
+
+    height: fit-content;
+    align-self: flex-start;
 }
 
+
+/* ===== TITLE ===== */
 .filter-panel h3 {
-    margin-bottom: 12px;
-    color: #414833;
+    margin-bottom: 14px;
+    font-size: 1rem;
+    color: var(--dark-olive);
 }
 
+/* ===== LABELS ===== */
 .filter-panel label {
     display: block;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    color: #656D4A;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted-olive);
 }
 
+/* ===== INPUTS ===== */
 .filter-panel input,
 .filter-panel select {
     width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(0,0,0,0.15);
-    backdrop-filter: blur(6px);
+    padding: 10px 12px;            /* smaller but comfy */
+    margin-top: 6px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(65,72,51,0.25);
+    font-size: 0.85rem;
+    box-sizing: border-box;
 }
 
-/* Search Btn */
-.filter-panel button {
-    width: 100%;
-    margin-top: 18px;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(127, 85, 57, 0.85);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-    backdrop-filter: blur(5px);
+/* ===== BUTTON ===== */
+.filter-panel {
+    padding: 20px;
+    width: 280px;
+
+    background: radial-gradient(circle at top left,
+        rgba(253, 250, 245, 0.96),
+        rgba(237, 224, 212, 0.94));
+
+    border-radius: 22px;
+    border: 1px solid rgba(127, 85, 57, 0.18);
+    backdrop-filter: blur(18px);
+    box-shadow: var(--shadow-soft);
+
+    position: sticky;
+    top: 90px;
+
+    height: fit-content;   /* 🔥 KEY LINE */
+    align-self: flex-start; /* 🔥 prevents stretching */
 }
 
-.filter-panel button:hover {
-    background: rgba(166, 138, 100, 0.9);
-}
 
-/* ====== CARDS ====== */
+/* ====== CARDS GRID ====== */
 .animals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 22px;
 }
 
+/* ====== ANIMAL CARD (ADMIN CARD STYLE) ====== */
 .card {
-    background: rgba(255, 255, 255, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: linear-gradient(145deg,
+        rgba(255, 255, 255, 0.96),
+        rgba(237, 224, 212, 0.94));
     border-radius: 18px;
-    overflow: hidden;
-    backdrop-filter: blur(16px);
+    border: 1px solid rgba(127, 85, 57, 0.18);
+    box-shadow: 0 12px 30px rgba(90, 61, 42, 0.10);
     transition: 0.25s ease;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.10);
 }
 
+
 .card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.16);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(87,62,45,0.16);
 }
 
 .animal-photo {
@@ -104,102 +128,178 @@
     object-fit: cover;
 }
 
-/* Meet Button */
+/* ====== BUTTON ====== */
 .view-btn {
-    display: block;
-    margin-top: 10px;
+    margin-top: 12px;
     padding: 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(127, 85, 57, 0.6);
-    color: #7F5539;
-    background: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    border: 1px solid rgba(127,85,57,0.45);
+    color: var(--brown);
+    background: rgba(255,255,255,0.8);
     text-align: center;
     text-decoration: none;
-    transition: 0.2s;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    transition: var(--transition);
 }
 
 .view-btn:hover {
-    background: rgba(127, 85, 57, 0.15);
+    background: rgba(127,85,57,0.12);
 }
 
-/* ====== FLOATING SIDE PANEL ====== */
+/* ====== SIDE DETAIL PANEL (ADMIN SLIDE STYLE) ====== */
 .detail-panel {
+    overflow-y: auto;
     position: fixed;
     top: 0;
-    right: -450px; /* hidden */
-    width: 400px;
+    right: -460px;
+    width: 420px;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.45);
-    border-left: 1px solid rgba(255,255,255,0.45);
+    padding: 26px 28px;
+    background: radial-gradient(circle at top left,
+        rgba(253,250,245,0.96),
+        rgba(237,224,212,0.94));
+    border-left: 1px solid rgba(127,85,57,0.25);
     backdrop-filter: blur(22px);
-    box-shadow: -10px 0 30px rgba(0,0,0,0.12);
-    overflow-y: auto;
-    padding: 20px 24px;
-    transition: right 0.35s ease;
+    box-shadow: -12px 0 40px rgba(0,0,0,0.18);
+    transition: var(--transition);
+    border-radius: 32px 0 0 32px;
     z-index: 3000;
-    border-radius: 25px 0 0 25px;
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
 }
 
-/* Open panel on :target */
+/* OPEN PANEL */
 .detail-panel:target {
     right: 0;
+    opacity: 1;
+    transform: translateX(0) scale(1);
 }
 
 .detail-panel img {
     width: 100%;
     border-radius: 18px;
     margin-bottom: 16px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
 }
 
-/* Close button */
+/* Close */
 .close-panel {
     position: absolute;
-    top: 14px;
+    top: 16px;
     left: 18px;
-    font-size: 28px;
+    font-size: 30px;
     text-decoration: none;
-    color: #7F5539;
+    color: var(--brown);
     font-weight: bold;
-    background: rgba(255,255,255,0.45);
-    padding: 4px 10px;
-    border-radius: 50%;
-    backdrop-filter: blur(6px);
 }
 
-/* Adopt button */
+/* ====== ADOPT BUTTON ====== */
 .adopt-btn {
     display: block;
-    padding: 14px;
-    background: rgba(127, 85, 57, 0.9);
+    padding: 12px;
+    margin-top: 22px;
+    background: linear-gradient(135deg, var(--brown), #9C6644);
     color: white;
     text-align: center;
-    border-radius: 14px;
+    border-radius: 999px;
     text-decoration: none;
-    margin-top: 20px;
-    font-size: 1rem;
-    transition: 0.2s;
-    box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+    font-weight: 600;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+    transition: var(--transition);
 }
 
 .adopt-btn:hover {
-    background: rgba(166, 138, 100, 1);
+    transform: translateY(-1px);
 }
 
 .disabled-btn {
-    padding: 14px;
-    background: rgba(100,100,100,0.4);
+    margin-top: 22px;
+    padding: 12px;
+    background: rgba(120,120,120,0.35);
     color: white;
+    border-radius: 999px;
     text-align: center;
-    border-radius: 14px;
-    margin-top: 20px;
-    font-size: 1rem;
-    backdrop-filter: blur(6px);
+}
+/* ===== DETAIL GRID ===== */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    margin: 14px 0;
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.status-available {
+    background: rgba(101, 109, 74, 0.18);
+    color: var(--olive);
+}
+
+.status-reserved {
+    background: rgba(130, 119, 190, 0.18);
+    color: #5b4a9c;
+}
+
+.status-adopted {
+    background: rgba(120,120,120,0.25);
+    color: #555;
+}
+
+.status-pending {
+    background: rgba(201, 155, 52, 0.22);
+    color: #8a6b1d;
+}
+
+/* ===== HEALTH TAGS ===== */
+.health-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0 16px;
+}
+
+.tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(255,255,255,0.7);
+}
+
+.tag.ok {
+    background: rgba(101, 109, 74, 0.18);
+    color: var(--olive);
+}
+
+.tag.no {
+    background: rgba(180, 70, 70, 0.18);
+    color: #8b2f2f;
+}
+
+/* ===== MEDICAL ===== */
+.medical-box {
+    background: rgba(255,255,255,0.7);
+    border-left: 4px solid #c95b5b;
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+/* ===== META ===== */
+.meta {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    margin-top: 14px;
 }
 
 </style>
+
 
 
 <!-- ======================= PAGE ======================= -->
@@ -278,26 +378,66 @@
 
     <a href="#" class="close-panel">×</a>
 
-    <img src="{{ a.photo_url }}">
+    <img src="{{ a.photo_url|default:'/static/img/animal-placeholder.jpg' }}">
 
     <h2>{{ a.name }}</h2>
-    <p><strong>Type:</strong> {{ a.type }}</p>
-    <p><strong>Age:</strong> {{ a.age }} years</p>
-    <p><strong>Location:</strong> {{ a.location }}</p>
 
-    <p style="margin-top:15px;">{{ a.description }}</p>
+    <!-- STATUS BADGE -->
+    <span class="status-badge status-{{ a.status }}">
+        {{ a.status|title }}
+    </span>
+{% if a.status == "available" %}
+        <a href="http://127.0.0.1:8003/adoption/create/?animal_id={{ a.id }}"
+           class="adopt-btn">
+            🤍 Adopt {{ a.name }}
+        </a>
+    {% else %}
+        <div class="disabled-btn">
+            {{ a.status|title }}
+        </div>
+    {% endif %}
+    <div class="detail-grid">
+        <p><strong>Type:</strong> {{ a.type }}</p>
+        <p><strong>Breed:</strong> {{ a.breed|default:"Unknown" }}</p>
+        <p><strong>Age:</strong> {{ a.age }}</p>
+        <p><strong>Gender:</strong> {{ a.gender|default:"Not specified" }}</p>
+        <p><strong>Size:</strong> {{ a.size|default:"Medium" }}</p>
+        <p><strong>Location:</strong> {{ a.location }}</p>
+    </div>
 
-   {% if a.status == "available" and adoption_url %}
-<a href="http://127.0.0.1:8003/adoption/create/?animal_id={{ a.id }}"
-   class="adopt-btn">
-   🤍 Adopt {{ a.name }}
-</a>
+    <!-- HEALTH -->
+    <h4>🩺 Health</h4>
+    <div class="health-tags">
+        <span class="tag {% if a.vaccinated %}ok{% else %}no{% endif %}">
+            💉 Vaccinated
+        </span>
+        <span class="tag {% if a.sterilized %}ok{% else %}no{% endif %}">
+            ✂️ Sterilized
+        </span>
+        <span class="tag {% if a.dewormed %}ok{% else %}no{% endif %}">
+            🪱 Dewormed
+        </span>
+    </div>
 
-{% else %}
-<div class="disabled-btn">{{ a.status|title }}</div>
-{% endif %}
+    {% if a.medical_conditions %}
+        <h4>⚠️ Medical Conditions</h4>
+        <p class="medical-box">{{ a.medical_conditions }}</p>
+    {% endif %}
 
+    <h4>📖 About</h4>
+    <p>{{ a.description|default:"No description provided." }}</p>
+
+    <p class="meta">
+        Submitted by: 
+        <strong>
+            {% if a.submitted_by_user %}Community member{% else %}Shelter{% endif %}
+        </strong><br>
+        Added on {{ a.created_at|date:"M d, Y" }}
+    </p>
+
+    
 </div>
+
 {% endfor %}
 
 {% endblock %}

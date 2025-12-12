@@ -73,7 +73,7 @@ def request_status(request, id):
             "user_id": req.user_id,
             "animal_id": req.animal_id,
             "status": req.status,
-            "date": req.date_requested
+            "date": req.date_requested,
         })
     except AdoptionRequest.DoesNotExist:
         return JsonResponse({"error": "Not found"}, status=404)
@@ -108,21 +108,42 @@ def admin_list(request):
 # -------------------------------------------------------------------
 # APPROVE REQUEST (FIXED)
 # -------------------------------------------------------------------
+
+
+
 def approve_request(request, id):
     try:
         req = AdoptionRequest.objects.get(id=id)
+
+        # 1️⃣ Update adoption status
         req.status = "approved"
         req.save()
 
-        # Try sending event but DO NOT BREAK if RabbitMQ fails
+        # 2️⃣ Notify animals_service via CONSUL (safe call)
         try:
-           publish_adoption({
-             "event": "adoption_approved",
-             "request_id": req.id,
-             "user_id": req.user_id,
-             "animal_id": req.animal_id
+            animals_url = get_service_url("animals-service")
+
+            if animals_url:
+                requests.post(
+                    f"{animals_url}/api/animals/{req.animal_id}/adopted/",
+                    timeout=3
+                )
+                print("✅ Animal marked as adopted:", req.animal_id)
+            else:
+                print("⚠ animals-service not found in Consul")
+
+        except Exception as e:
+            print("⚠ Error notifying animals_service:", e)
+
+        # 3️⃣ RabbitMQ event (keep your logic)
+        try:
+            publish_adoption({
+                "event": "adoption_approved",
+                "request_id": req.id,
+                "user_id": req.user_id,
+                "animal_id": req.animal_id
             })
-           print("🔔 Approve request triggered for ID:", req.id)
+            print("🔔 Adoption approved event sent:", req.id)
 
         except Exception as e:
             print("⚠ RabbitMQ ERROR on approve:", e)

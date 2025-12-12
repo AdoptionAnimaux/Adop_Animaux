@@ -78,6 +78,13 @@ def catalog_view(request):
         "user_id": request.session.get("user_id"),
     })
 
+@api_view(["POST"])
+def mark_animal_adopted(request, pk):
+    animal = get_object_or_404(Animal, pk=pk)
+    animal.status = "adopted"
+    animal.save()
+    return Response({"message": "Animal marked as adopted"})
+
 def animal_detail(request, pk):
     if is_admin(request):
         return redirect("admin_dashboard")
@@ -116,8 +123,6 @@ def admin_dashboard(request):
     stats = {
         "total_animals": Animal.objects.count(),
         "pending_animals": Animal.objects.filter(status="pending").count(),
-        "available_animals": Animal.objects.filter(status="available").count(),
-        "reserved_animals": Animal.objects.filter(status="reserved").count(),
         "adopted_animals": Animal.objects.filter(status="adopted").count(),
     }
 
@@ -229,4 +234,22 @@ def admin_adopted_animals(request):
     animals = Animal.objects.filter(status="adopted")
     return render(request, "animals/admin_adopted.html", {"animals": animals})
 
+def admin_add_animal(request):
+    if not is_admin(request):
+        return redirect("catalog")
+
+    if request.method == "POST":
+        form = AnimalForm(request.POST)
+        if form.is_valid():
+            animal = form.save(commit=False)
+            animal.status = "available"   # ADMIN = auto approved
+            animal.submitted_by_user = False
+            animal.save()
+            return redirect("admin_dashboard")
+    else:
+        form = AnimalForm()
+
+    return render(request, "animals/admin_dashboard.html", {
+
+    })
 

@@ -1,3 +1,5 @@
+{% extends "shared/admin_base.html" %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,6 +202,7 @@
         }
 
         .stat-number {
+            text-shadow: 0 2px 6px rgba(0,0,0,0.08);
             font-size: 1.9rem;
             font-weight: 600;
             letter-spacing: -0.04em;
@@ -283,6 +286,63 @@
             text-decoration: none;
             transition: var(--transition);
         }
+        /* ================= ADD ANIMAL SLIDE PANEL ================= */
+
+.side-panel {
+    border-radius: 32px 0 0 32px; /* more round */
+    position: fixed;
+    top: 0;
+    right: -460px;
+    width: 420px;
+    height: 100vh;
+    padding: 26px 28px;
+    background: radial-gradient(circle at top left,
+        rgba(253, 250, 245, 0.96),
+        rgba(237, 224, 212, 0.94));
+    backdrop-filter: blur(22px);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.18);
+    border-left: 1px solid rgba(127, 85, 57, 0.25);
+    transition: right 0.35s ease;
+    z-index: 4000;
+    transform: translateX(40px) scale(0.96);
+    opacity: 0;
+}
+
+/* OPEN PANEL */
+.side-panel:target {
+    right: 0;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+/* Close button */
+.close-panel {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    font-size: 30px;
+    text-decoration: none;
+    color: var(--brown);
+    font-weight: bold;
+}
+
+/* Form fields */
+.side-panel input,
+.side-panel textarea,
+.side-panel select {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(65, 72, 51, 0.25);
+    background: rgba(255,255,255,0.85);
+    margin-bottom: 14px;
+}
+
+.w-full {
+    width: 100%;
+}
+
+
 
     </style>
 </head>
@@ -295,7 +355,7 @@
             <span class="admin-badge">Admin area</span>
         </div>
         <div class="admin-topbar-right">
-            <a href="{% url 'catalog' %}">← Back to catalog</a>
+            <a href="127.0.0.1:8002/">← Back to catalog</a>
         </div>
     </div>
 
@@ -322,7 +382,7 @@
                 <a href="{% url 'admin_manage_animals' %}" class="stat-card">
                     <div class="stat-badge">All</div>
                     <span class="stat-label">Total animals</span>
-                    <span class="stat-number">{{ total_animals }}</span>
+                    <span class="stat-number">{{ total_animals|default_if_none:0 }}</span>
                     <span class="stat-foot">Full catalog currently in the system.</span>
                 </a>
 
@@ -347,13 +407,50 @@
             <div class="admin-actions-row">
                 <small>Use the cards above to quickly jump into management views.</small>
                 <div class="btn-row">
-                    <a href="{% url 'admin_manage_animals' %}" class="btn-primary">Manage all animals</a>
-                    <a href="{% url 'admin_pending' %}" class="btn-outline">Review pending proposals</a>
-                </div>
+    <a href="{% url 'admin_manage_animals' %}" class="btn-primary">
+        Manage all animals
+    </a>
+
+   
+                <!-- OPEN PANEL -->
+                <a href="#add-animal" class="btn-primary">
+                     Add animal
+                </a>
+
+    <a href="{% url 'admin_pending' %}" class="btn-outline">
+        Review pending proposals
+    </a>
+</div>
             </div>
 
         </section>
     </main>
+    
+<!-- ================= ADD ANIMAL SLIDE PANEL ================= -->
+<div id="add-animal" class="side-panel">
+
+    <a href="#" class="close-panel">×</a>
+
+    <h2>Add animal</h2>
+    <p>Published immediately (admin)</p>
+
+    <form method="POST" action="{% url 'admin_add_animal' %}">
+        {% csrf_token %}
+
+        {{ form.name }}
+        {{ form.type }}
+        {{ form.breed }}
+        {{ form.age }}
+        {{ form.location }}
+        {{ form.description }}
+        {{ form.photo_url }}
+
+        <button class="btn-primary w-full">
+            Save animal
+        </button>
+    </form>
+</div>
+
 </div>
 </body>
 </html>
