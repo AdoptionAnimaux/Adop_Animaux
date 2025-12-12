@@ -14,9 +14,9 @@ def callback(ch, method, properties, body):
     # Construire le message à afficher
     msg = ""
     if data["event"] == "adoption_approved":
-        msg = f"Votre demande d'adoption de l'animal {data['animal_id']} a été ACCEPTÉE 🎉"
+        msg = f"Votre demande d'adoption de l'animal {data['animal_name']} a été ACCEPTÉE 🎉"
     elif data["event"] == "adoption_rejected":
-        msg = f"Votre demande d'adoption de l'animal {data['animal_id']} a été REFUSÉE ❌"
+        msg = f"Votre demande d'adoption de l'animal {data['animal_name']} a été REFUSÉE ❌"
     else:
         msg = f"Notification reçue : {data}"
 
