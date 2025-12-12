@@ -134,7 +134,6 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Media files (Uploaded photos)
 MEDIA_URL = '/media/'
