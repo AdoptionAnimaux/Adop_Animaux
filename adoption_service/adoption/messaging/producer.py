@@ -1,18 +1,20 @@
-from .connection import get_connection
 import json
+from .connection import get_connection   # ✅ tu avais oublié ceci
 
 def publish_adoption(data):
-    connection, channel = get_connection()
-    queue = "adoption_queue"   # même nom que le consumer
+    try:
+        connection, channel = get_connection()
 
-    channel.queue_declare(queue=queue, durable=True)
+        channel.queue_declare(queue="adoption_queue", durable=True)
 
-    channel.basic_publish(
-        exchange='',
-        routing_key=queue,
-        body=json.dumps(data)
-    )
+        channel.basic_publish(
+            exchange="",
+            routing_key="adoption_queue",
+            body=json.dumps(data)
+        )
 
-    print("[✔] Message envoyé à adoption_queue :", data)
+        print("✔ Message envoyé à adoption_queue :", data)
+        connection.close()
 
-    connection.close()
+    except Exception as e:
+        print("❌ ERREUR RabbitMQ :", e)

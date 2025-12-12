@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil — Adoption Service{% endblock %}
+
+{% block content %}
+
+<div class="home-wrapper">
+
+    <h1 class="home-title">Find a Friend ❤️</h1>
+
+    <p class="home-subtitle">
+        Bienvenue dans le microservice d’adoption.<br>
+        Choisissez un animal et envoyez une demande !
+    </p>
+
+    <div class="home-actions">
+        <a href="/adoption/create/" class="btn-main">🐾 Apply for Adoption</a>
+        <a href="/adoption/list/1/" class="btn-secondary">📄 Voir mes demandes</a>
+    </div>
+
+</div>
+
+{% endblock %}

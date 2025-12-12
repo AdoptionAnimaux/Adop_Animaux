@@ -1,0 +1,41 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'animals/css/style.css' %}">
+{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Admin Dashboard</h1>
+
+<div class="admin-dashboard">
+
+    <div class="stat-card glass">
+        <h2>Total Animals</h2>
+        <p>{{ stats.total }}</p>
+    </div>
+
+    <div class="stat-card glass">
+        <h2>Pending</h2>
+        <p>{{ stats.pending }}</p>
+    </div>
+
+    <div class="stat-card glass">
+        <h2>Available</h2>
+        <p>{{ stats.available }}</p>
+    </div>
+
+    <div class="stat-card glass">
+        <h2>Adopted</h2>
+        <p>{{ stats.adopted }}</p>
+    </div>
+
+</div>
+
+<div class="admin-actions">
+    <a class="btn-primary" href="/admin/manage/">Manage Animals</a>
+    <a class="btn-outline" href="/admin/pending/">Pending Proposals</a>
+</div>
+
+{% endblock %}

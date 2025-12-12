@@ -1,0 +1,30 @@
+{% extends 'shared/base.html' %}
+{% block title %}Pending Proposals{% endblock %}
+{% block extra_css %}{% load static %}
+<link rel="stylesheet" href="{% static 'animals/css/styles.css' %}">
+{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Pending Animal Proposals</h1>
+
+<table class="glass admin-table">
+    <tr>
+        <th>Name</th><th>Type</th><th>Age</th>
+        <th>Location</th><th>Actions</th>
+    </tr>
+
+    {% for a in pending %}
+    <tr>
+        <td>{{ a.name }}</td>
+        <td>{{ a.type }}</td>
+        <td>{{ a.age }}</td>
+        <td>{{ a.location }}</td>
+        <td>
+            <a class="btn-primary" href="/admin/approve/{{ a.id }}/">Approve</a>
+            <a class="btn-outline" href="/admin/reject/{{ a.id }}/">Reject</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

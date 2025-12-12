@@ -1,0 +1,133 @@
+/* GENERAL */
+body {
+    background: #f6efe7; 
+    font-family: "Poppins", sans-serif;
+    color: #4a3f35;
+    padding-top: 80px;
+}
+
+/* NAVBAR */
+.navbar {
+    background: #8b5e34 !important; 
+    height: 65px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 22px;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    padding: 8px 12px !important;
+    transition: 0.2s;
+}
+
+.nav-link:hover {
+    background: #a56d3d;
+    border-radius: 8px;
+}
+
+/* TITLES */
+h1, h2, h3 {
+    font-weight: 700;
+    color: #4a3f35;
+}
+
+/* BUTTONS */
+.btn {
+    border-radius: 12px !important;
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #d88c51;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #ca7e48;
+}
+
+.btn-success {
+    background-color: #60b37e;
+    border: none;
+}
+.btn-success:hover {
+    background-color: #4b9465;
+}
+
+.btn-danger {
+    border-radius: 12px !important;
+}
+
+/* CARDS */
+.card {
+    border: none;
+    background: #fff8f2;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* TABLE */
+table {
+    background: #fff8f2;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+thead {
+    background-color: #d88c51;
+    color: white;
+    font-size: 18px;
+}
+
+tbody tr:hover {
+    background-color: #f2e8de;
+    transition: 0.2s;
+}
+
+/* STATUS LABELS */
+.status-approved {
+    background: #60b37e;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 12px;
+}
+
+.status-pending {
+    background: #eab85d;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 12px;
+}
+
+.status-rejected {
+    background: #d9534f;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 12px;
+}
+
+/* FORM */
+form input, form select {
+    border-radius: 10px !important;
+    padding: 12px !important;
+}
+
+form label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-box {
+    background: #fff8f2;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,32 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'animals/css/style.css' %}">
+{% endblock %}
+{% block title %}Manage Animals{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Manage All Animals</h1>
+
+<table class="glass admin-table">
+    <tr>
+        <th>Name</th><th>Type</th><th>Status</th>
+        <th>Age</th><th>Location</th><th>Actions</th>
+    </tr>
+
+    {% for a in animals %}
+    <tr>
+        <td>{{ a.name }}</td>
+        <td>{{ a.type }}</td>
+        <td>{{ a.status }}</td>
+        <td>{{ a.age }}</td>
+        <td>{{ a.location }}</td>
+        <td><a class="btn-outline" href="{% url 'admin_edit_animal' a.id %}">Edit</a>
+<a class="btn-outline" href="{% url 'admin_delete_animal' a.id %}">Delete</a>
+</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

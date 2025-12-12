@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>{% block title %}Adoption App{% endblock %}</title>
+    {% load static %}
+
+<style>
+/* -------------------------------------------------
+   GLOBAL THEME – Modern, Soft, Warm UI
+   Colors: #7F5539 #A68A64 #EDE0D4 #656D4A #414833
+-------------------------------------------------- */
+
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: url("C:\Users\Tassili\OneDrive\Bureau\Adop_Animaux\ui_service\static\ui.css")
+                center/cover fixed no-repeat;
+    color: #414833;
+}
+
+/* Soft transparent layer so text is readable */
+.background-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(3px);
+    z-index: -1;
+}
+
+/* -------------------------------------------------
+   NAVBAR – Glassmorphism
+-------------------------------------------------- */
+.navbar {
+    backdrop-filter: blur(14px);
+    background: rgba(255,255,255,0.55);
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+    padding: 15px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #5c574f;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: 0.2s;
+
+}
+
+.navbar a:hover {
+    color: #7F5539;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: 600;
+    color: #7F5539;
+}
+
+/* -------------------------------------------------
+   CONTAINER
+-------------------------------------------------- */
+main {
+    padding: 40px 60px;
+}
+
+/* -------------------------------------------------
+   GLASS PANELS
+-------------------------------------------------- */
+.glass {
+    background: rgba(255,255,255,0.70);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* -------------------------------------------------
+   FOOTER
+-------------------------------------------------- */
+.footer {
+    margin-top: 80px;
+    padding: 30px;
+    text-align: center;
+    font-size: 14px;
+    background: rgba(255,255,255,0.60);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,255,255,0.3);
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="background-overlay"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="/" class="brand">🐾 Adoption Animaux</a>
+    </div>
+
+    <div class="nav-right">
+        <a href="http://animals-service:8002/">Animaux</a>
+        <a href="http://accounts-service:8001/profile/">Mon compte</a>
+        <a href="http://adoption-service:8003/my/">Mes adoptions</a>
+        <a href="/">Accueil</a>
+        <a href="#about-section">À propos</a>
+    </div>
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer id="about-section" class="footer">
+    <h3>À propos</h3>
+    <p>Plateforme d’adoption d’animaux — architecture microservices (Django + Consul + RabbitMQ + Traefik).</p>
+    <p>Développé avec ❤️ pour aider les animaux à trouver un foyer.</p>
+</footer>
+
+</body>
+</html>

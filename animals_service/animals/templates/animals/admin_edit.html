@@ -1,0 +1,22 @@
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'animals/css/style.css' %}">
+{% endblock %}
+{% block title %}Edit {{ animal.name }}{% endblock %}
+
+{% block content %}
+
+<div class="form-container glass">
+    <h1>Edit {{ animal.name }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class="btn-primary full">Save</button>
+    </form>
+</div>
+
+{% endblock %}

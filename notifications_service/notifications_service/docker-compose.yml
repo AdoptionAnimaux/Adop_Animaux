@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # Port AMQP pour pika
+      - "15672:15672"  # UI web de RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  notifications_web:
+    build: .
+    container_name: notifications_web
+    ports:
+      - "8004:8004"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+
+  notifications_consumer:
+    build: .
+    container_name: notifications_consumer
+    command: ["python", "manage.py", "run_consumer"]
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+
+notifications_service:
+  build: ./notifications_service
+  container_name: notifications_service
+  ports:
+    - "8005:8000"
+  environment:
+    RABBITMQ_HOST: rabbitmq
+  depends_on:
+    - rabbitmq
+  networks:
+    - adop_network

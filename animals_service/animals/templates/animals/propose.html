@@ -1,0 +1,22 @@
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'animals/css/style.css' %}">
+{% endblock %}
+{% block title %}Propose an Animal{% endblock %}
+
+{% block content %}
+
+<div class="form-container glass">
+    <h1>Propose an Animal</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class="btn-primary full">Submit Proposal</button>
+    </form>
+</div>
+
+{% endblock %}
