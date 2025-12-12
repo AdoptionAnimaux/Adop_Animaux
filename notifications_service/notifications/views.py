@@ -78,7 +78,12 @@ def my_notifications(request):
     return render(request, "notifications/my_notifications.html")
 
 def user_notifications(request, user_id):
-     # type: ignore # accounts-service
+    notifications = Notification.objects.filter(
+        user_id=user_id
+    ).order_by("-created_at")
 
-    notifications = Notification.objects.filter(user_id=user_id).order_by("-created_at")
-    return render(request, "notifications/user_notifications.html", {"notifications": notifications})
+    return render(
+        request,
+        "notifications/user_notifications.html",
+        {"notifications": notifications}
+    )
