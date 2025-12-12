@@ -145,3 +145,5 @@ SERVICE_ID = "accounts-service-1"
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ChangeMe123!')
+
+TRAEFIK_BASE_URL = "http://localhost:80"
