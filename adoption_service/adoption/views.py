@@ -28,12 +28,8 @@ def create_request(request):
         return render(request, "client/form_adoption.html")
 
     if request.method == "POST":
-        user_id = request.session.get("user_id")
-        if not user_id:
-             return redirect("login")  # redirection vers accounts-service
-
+        user_id = request.POST.get("user_id")
         animal_id = request.POST.get("animal_id")
-        appointment_id = request.POST.get("appointment_id")
 
         if not user_id or not animal_id:
             return render(request, "client/form_adoption.html", {
@@ -43,7 +39,6 @@ def create_request(request):
         req = AdoptionRequest.objects.create(
             user_id=int(user_id),
             animal_id=int(animal_id),
-            appointment_id=int(appointment_id) if appointment_id else None,
             status="pending"
         )
 
