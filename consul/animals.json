@@ -1,5 +1,5 @@
 {
-  "service": {
+ "service": {
     "name": "animals-service",
     "port": 8002,
     "address": "127.0.0.1"
