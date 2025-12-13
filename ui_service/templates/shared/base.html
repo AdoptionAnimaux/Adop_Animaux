@@ -200,17 +200,45 @@ main {
     <div class="nav-right">
                 <a href="http://127.0.0.1:8002/">Catalogue 🐾</a>
         <!-- accounts_service -->
-        <a href="http://127.0.0.1:8001/api/accounts/home/">Mon compte</a>
+        <a href="http://127.0.0.1:8001/home/">Mon compte</a>
+
+
 
         <!-- adoption_service -->
         <a href="http://127.0.0.1:80/adoption/list/1/">Mes adoptions</a>
 
         <!-- notifications (adoption_service) -->
+<<<<<<< HEAD
 
         <a class="nav-link"
               href="http://127.0.0.1:8004/notifications/user/{{ user_id }}/">
               🔔 My Notifications
+=======
+<<<<<<< HEAD
+        <a href="http://127.0.0.1:8004/notifications/my/"
+   class="nav-notification"
+   title="My notifications">
+    🔔
+    {% if notifications_count %}
+        <span>{{ notifications_count }}</span>
+    {% endif %}
+</a>
+=======
+<<<<<<< HEAD
+        <a href="http://127.0.0.1:80/notifications/user/6/">
+            🔔 Notifications
+=======
+        <a href="http://127.0.0.1:8004/notifications/user/{{ request.user.id }}/"
+           class="nav-notification"
+           title="My notifications">
+            🔔
+            {% if notifications_count %}
+                <span>{{ notifications_count }}</span>
+            {% endif %}
+>>>>>>> aeab8c9eace1aea025b44669fe3aacc3b19696a2
+>>>>>>> 3d4474f2c15ad17de509d40f5f31098eb55ba86a
         </a>
+>>>>>>> d47e8b5518476719fe212b252349202af19b717c
 
         <a href="#about-section">À propos</a>
     </div>

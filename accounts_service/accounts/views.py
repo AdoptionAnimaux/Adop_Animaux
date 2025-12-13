@@ -8,6 +8,7 @@ from accounts_service.utils import get_service_url
 
 # ---------------- LOGIN ----------------
 def login_view(request):
+
     if request.method == "POST":
         form = LoginForm(request.POST)
 
@@ -30,6 +31,12 @@ def login_view(request):
                 return render(request, "accounts/login.html", {"form": form})
         
            
+
+            # ✅ THIS IS THE MISSING LINE
+            request.session["user_id"] = user.id
+            request.session.modified = True
+
+            # Redirect after login
             if user.is_admin:
                 return redirect("http://127.0.0.1:8002/admin/?user_id={user.id}")
             else:
@@ -41,7 +48,6 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "accounts/login.html", {"form": form})
-
 
 
 # ---------------- LOGOUT ----------------
