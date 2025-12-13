@@ -1,3 +1,4 @@
+from urllib import request
 import requests
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -7,6 +8,8 @@ from adoption_service.utils import get_service_url
 from adoption.messaging.producer import publish_adoption
 
 from adoption_service.utils import get_service_url
+
+
 
 
 def redirect_to_login():
@@ -24,24 +27,26 @@ def home(request):
 # CREATE ADOPTION REQUEST
 # -------------------------------------------------------------------
 def create_request(request):
-    # GET: open form with prefilled animal_id
+    
     if request.method == "GET":
         animal_id = request.GET.get("animal_id")
+        user_id = request.GET.get("user_id")
 
         return render(request, "client/form_adoption.html", {
-            "animal_id": animal_id
+            "animal_id": animal_id,
+            "user_id": user_id
         })
 
-    # POST: submit adoption
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         animal_id = request.POST.get("animal_id")
         appointment_id = request.POST.get("appointment_id")
 
         if not user_id or not animal_id:
-            return render(request, "form_adoption.html", {
+            return render(request, "client/form_adoption.html", {
                 "error": "User ID and Animal ID are required",
-                "animal_id": animal_id
+                "animal_id": animal_id,
+                "user_id": user_id
             })
 
         req = AdoptionRequest.objects.create(
@@ -51,8 +56,9 @@ def create_request(request):
             status="pending"
         )
 
-        return render(request, "client/success_adoption.html", { "adoption": req
-})
+        return render(request, "client/success_adoption.html", {
+            "adoption": req
+        })
 
 
 

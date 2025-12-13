@@ -198,9 +198,10 @@ main {
     </div>
 
     <div class="nav-right">
-                <a href="http://127.0.0.1:8002/">Catalogue 🐾</a>
+                <a href="http://127.0.0.1:80/animals">Catalogue 🐾</a>
         <!-- accounts_service -->
-        <a href="http://127.0.0.1:8001/home/">Mon compte</a>
+        <a href="http://127.0.0.1:8001/home">Mon compte</a>
+
 
 
 
@@ -209,7 +210,7 @@ main {
 
         <!-- notifications (adoption_service) -->
 
-        <a href="http://127.0.0.1:8004/notifications/user/" class="nav-link notif-link">
+        <a href="http://127.0.0.1:80/notifications/user/{{ user_id }}/" class="nav-link notif-link">
             🔔 Notifications
             {% if notifications_count %}
                 <span class="notif-badge">{{ notifications_count }}</span>

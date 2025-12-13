@@ -2,6 +2,11 @@ from django.shortcuts import render, redirect
 import requests
 
 from .models import Notification
+ 
+from django.shortcuts import render
+
+def notifications_home(request):
+    return render(request, "notifications/index.html")
 
 
 def get_user_id_from_accounts(request):
@@ -46,3 +51,8 @@ def user_notifications(request):
     ).order_by("-created_at")
 
     return render(request, "notifications/user_notifications.html", {"notifications": notifications})
+
+from django.http import JsonResponse
+
+def health(request):
+    return JsonResponse({"status": "ok"})

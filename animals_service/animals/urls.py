@@ -5,6 +5,7 @@ urlpatterns = [
     # =====================
     # USER (client)
     # =====================
+    path("animals/", views.animals_home, name="animals_home"),
     path("", views.catalog_view, name="catalog"),
     path("animals/<int:pk>/", views.animal_detail, name="animal_detail"),
     path("animals/propose/", views.client_propose_animal, name="client_propose_animal"),

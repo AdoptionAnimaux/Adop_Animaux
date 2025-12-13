@@ -10,6 +10,15 @@ from .models import Animal
 from .forms import AnimalForm
 from .serializers import AnimalSerializer
 
+from django.shortcuts import render
+
+
+def animals_home(request):
+    animals = Animal.objects.all()
+    return render(request, "animals/catalog.html", {
+        "animals": animals
+    })
+
 
 # ============================
 # FILTER SYSTEM

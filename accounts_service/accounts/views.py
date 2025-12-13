@@ -4,7 +4,8 @@ from .models import User
 from .forms import LoginForm, RegisterForm, ProfileForm
 from accounts_service.utils import get_service_url
 
-
+def accounts_home(request):
+    return render(request, "accounts/home.html")
 
 # ---------------- LOGIN ----------------
 def login_view(request):
@@ -205,3 +206,10 @@ def toggle_user_status(request, user_id):
     target.save()
 
     return redirect("admin_dashboard")
+
+from django.http import JsonResponse
+
+def health(request):
+    return JsonResponse({"status": "ok"})
+
+

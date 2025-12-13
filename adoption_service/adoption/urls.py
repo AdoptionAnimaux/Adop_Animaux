@@ -2,17 +2,19 @@ from django.urls import path ,include
 from . import views
 from .views import check_adoption
 urlpatterns = [
-
+     
     # ---------------------------------------------
     # 👤 CLIENT ROUTES
     # ---------------------------------------------
+    
+    
     path("", views.home, name="adoption_home"),
     path("create/", views.create_request, name="create_adoption"),
     path("list/<int:user_id>/", views.user_requests, name="user_adoptions"),
     path("status/<int:id>/", views.request_status, name="request_status"),
     path("cancel/<int:id>/", views.cancel_request, name="cancel_request"),
     path("notifications/<int:user_id>/", views.go_to_notifications, name="go_to_notifications"),
-
+    path("my/<int:user_id>/", views.user_requests, name="user_requests"),
     # ---------------------------------------------
     # 👨‍💼 ADMIN ROUTES
     # ---------------------------------------------

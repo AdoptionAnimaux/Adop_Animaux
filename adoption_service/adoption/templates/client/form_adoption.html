@@ -133,6 +133,11 @@
     {% csrf_token %}
 
     <input type="hidden" name="animal_id" value="{{ animal_id }}">
+    <input type="hidden" name="user_id" value="{{ user_id }}">
+        <div class="adoption-group">
+            <label>User ID</label>
+            <input type="number" value="{{ user_id }}" readonly>    
+
 
     <div class="adoption-group">
         <label>Animal ID</label>

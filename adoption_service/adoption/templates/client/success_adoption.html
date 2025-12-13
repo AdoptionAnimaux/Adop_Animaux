@@ -15,9 +15,11 @@
 
     <div class="mt-4">
         <!-- session-based -->
-        <a href="{% url 'my_adoptions' %}" class="btn btn-primary btn-lg">
-            📄 View My Requests
+        <a href="{% url 'user_requests' adoption.user_id %}"
+         class="btn btn-primary btn-lg">
+          📄 View My Requests
         </a>
+
 
         <a href="http://127.0.0.1:8002" class="btn btn-secondary btn-lg">
             ⬅ Back Home

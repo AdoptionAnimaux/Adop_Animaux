@@ -1,15 +1,21 @@
 from django.urls import path
+
+from . import views
+
 from .views import (
     login_view, logout_view, home, profile, delete_account,
     admin_dashboard, admin_edit_user, toggle_user_status
 )
 
 urlpatterns = [
+    
+    path("accounts/", views.accounts_home, name="accounts_home"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("home/", home, name="home"),
     path("profile/", profile, name="profile"),
     path("delete-account/", delete_account, name="delete_account"),
+    path("accounts/health/", views.health),
 
     # Admin
     path("admin/dashboard/", admin_dashboard, name="admin_dashboard"),
