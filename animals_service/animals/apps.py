@@ -15,9 +15,16 @@ class AnimalsConfig(AppConfig):
                     "Name": settings.SERVICE_NAME,
                     "ID": settings.SERVICE_ID,
                     "Port": settings.SERVICE_PORT,
-                    "Tags": ["animals", "django", "microservice"],
+                    "Tags": [
+                        "animals", 
+                        "django", 
+                        "microservice",
+                        "traefik.enable=true",
+                        "traefik.http.routers.animals.rule=PathPrefix(`/animals`)",
+                        "traefik.http.routers.animals.entrypoints=web"
+                    ],
                     "Check": {
-                        "HTTP": f"http://{settings.SERVICE_NAME}:{settings.SERVICE_PORT}/health/",
+                        "HTTP": f"http://{settings.CONSUL_HOST}:{settings.SERVICE_PORT}/api/animals/",
                         "Interval": "10s"
                     }
                 }

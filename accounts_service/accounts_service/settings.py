@@ -30,7 +30,16 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
+AUTH_USER_MODEL = 'accounts.User'
+
+
+
+# ... existing imports ...
+from datetime import timedelta
+
+# ... existing settings ...
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -55,11 +65,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'accounts_service.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        "DIRS": [
+            BASE_DIR / "../ui_service/templates",
+        ],  
+        'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -70,11 +83,10 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'accounts_service.wsgi.application'
 ASGI_APPLICATION = 'accounts_service.asgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -84,74 +96,65 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+# ... validators ...
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# ... i18n ...
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+# ... static ...
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "accounts" / "static"
 ]
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # RabbitMQ config (amqp url)
 RABBITMQ_URL = os.environ.get('RABBITMQ_URL', 'amqp://guest:guest@rabbitmq:5672/')
-
 
 # Consul config
 CONSUL_HOST = os.environ.get('CONSUL_HOST', 'consul')
 CONSUL_PORT = int(os.environ.get('CONSUL_PORT', '8500'))
 SERVICE_NAME = os.environ.get('SERVICE_NAME', 'accounts_service')
-SERVICE_PORT = int(os.environ.get('SERVICE_PORT', '8000'))
+# SERVICE_PORT cleanup
 SERVICE_PORT = int(os.environ.get('SERVICE_PORT', '8001'))
 SERVICE_ID = "accounts-service-1"
 
-
-# Admin credentials (used by the startup script to create an admin user)
+# Admin credentials
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'ChangeMe123!')
-SESSION_COOKIE_NAME = "adoption_session"
-SESSION_COOKIE_DOMAIN = "127.0.0.1"
-SESSION_COOKIE_PATH = "/"
-SESSION_COOKIE_SAMESITE = "Lax"
 
-# Required for local dev
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# REST Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
+# Simple JWT Configuration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY, 
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+# TRAEFIK
 TRAEFIK_BASE_URL = "http://localhost:80"
+
+# Consul / Service Configuration
+CONSUL_HOST = 'localhost'
+CONSUL_PORT = 8500
+SERVICE_NAME = 'accounts-service'
+SERVICE_ID = 'accounts-1'
+SERVICE_PORT = 8001
+
+

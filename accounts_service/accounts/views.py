@@ -1,215 +1,142 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.shortcuts import get_object_or_404, render
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer, RegisterSerializer
 from .models import User
-from .forms import LoginForm, RegisterForm, ProfileForm
-from accounts_service.utils import get_service_url
 
-def accounts_home(request):
+# ==========================================
+# 🖼 UI VIEWS (Stateless, REST compliant)
+# ==========================================
+# We serve the HTML templates here so the user has a "Frontend".
+# These views do NOT use sessions for logic. They just return the HTML file.
+# The HTML file then uses JS to talk to the API.
+
+def login_page(request):
+    return render(request, "accounts/login.html")
+
+def register_page(request): 
+    return render(request, "accounts/register.html")
+
+def profile_page(request):
+    return render(request, "accounts/profile.html")
+
+def admin_dashboard_page(request):
+    return render(request, "accounts/admin_dashboard.html")
+
+def home_page(request):
     return render(request, "accounts/home.html")
 
-# ---------------- LOGIN ----------------
+# ==========================================
+# 🔐 AUTH API (JWT)
+# ==========================================
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def login_view(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
 
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password"]
-
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                messages.error(request, "Invalid credentials")
-                return render(request, "accounts/login.html", {"form": form})
-
-            if not user.check_password(password):
-                messages.error(request, "Invalid credentials")
-                return render(request, "accounts/login.html", {"form": form})
-
-            if not user.is_active:
-                messages.error(request, "Account disabled")
-                return render(request, "accounts/login.html", {"form": form})
+    user = authenticate(email=email, password=password)
+    
+    if user is not None:
+        if not user.is_active:
+            return Response({"error": "Account disabled"}, status=status.HTTP_403_FORBIDDEN)
+            
+        refresh = RefreshToken.for_user(user)
+        # Add custom claims for Stateless Auth in other services
+        refresh['email'] = user.email
+        refresh['is_admin'] = user.is_admin
+        refresh['is_staff'] = user.is_staff
         
-           
-
-            # ✅ THIS IS THE MISSING LINE
-            request.session["user_id"] = user.id
-            request.session.modified = True
-
-            # Redirect after login
-            if user.is_admin:
-                return redirect("http://127.0.0.1:8002/admin/?user_id={user.id}")
-            else:
-                return redirect("http://127.0.0.1:8002/?user_id={user.id}")
-            
-            
-
+        # Add custom claims to Access Token (Critical for Stateless Auth)
+        access_token = refresh.access_token
+        access_token['email'] = user.email
+        access_token['is_admin'] = user.is_admin
+        access_token['is_staff'] = user.is_staff
+        
+        return Response({
+            'refresh': str(refresh),
+            'access': str(access_token),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'firstname': user.firstname,
+                'lastname': user.lastname,
+                'is_admin': user.is_admin
+            }
+        })
     else:
-        form = LoginForm()
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    return render(request, "accounts/login.html", {"form": form})
-
-
-# ---------------- LOGOUT ----------------
-def logout_view(request):
-    request.session.flush()
-    return redirect("login")
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'message': "User created successfully",
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            raw_password = form.cleaned_data["password"]
-            user.set_password(raw_password)
+# ==========================================
+# 👤 USER API (Protected)
+# ==========================================
 
-            user.is_admin = False
-            user.is_active = True
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
 
-            user.save()
-
-            messages.success(request, "Account created! You can now login.")
-            return redirect("login")
-    else:
-        form = RegisterForm()
-
-    return render(request, "accounts/register.html", {"form": form})
-
-
-def index(request):
-    return render(request, "accounts/index.html")
-
-
-# ---------------- USER HOME ----------------
-def home(request):
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return redirect("login")
-
-    user = User.objects.get(id=user_id)
-
-    if user.is_admin:
-        return redirect("admin_dashboard")
-
-    return render(request, "accounts/home.html", {"user": user, "user_name": user.firstname})
-
-
-
-# ---------------- PROFILE ----------------
-def profile(request):
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return redirect("login")
-
-    user = User.objects.get(id=user_id)
-
-    if request.method == "POST":
-        form = ProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully.")
-            return redirect("profile")
-    else:
-        form = ProfileForm(instance=user)
-
-    return render(request, "accounts/profile.html", {"form": form, "user": user})
-
-
-
-# ---------------- DELETE ACCOUNT ----------------
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_account(request):
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return redirect("login")
-
-    user = User.objects.get(id=user_id)
+    user = request.user
     user.delete()
+    return Response({"message": "Account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    request.session.flush()
-    return redirect("login")
+# ==========================================
+# 🛠 ADMIN API
+# ==========================================
 
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def admin_list_users(request):
+    users = User.objects.all() # Show all users for admin
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
 
-
-# ---------------- ADMIN DASHBOARD ----------------
-def admin_dashboard(request):
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return redirect("login")
-
-    admin = User.objects.get(id=user_id)
-
-    if not admin.is_admin:
-        return redirect("home")
-
-    users = User.objects.filter(is_admin=False)
-
-    return render(request, "accounts/admin_dashboard.html", {"admin": admin, "users": users})
-
-
-
-# ---------------- ADMIN EDIT USER ----------------
-from django.shortcuts import render, redirect, get_object_or_404
-
-def admin_edit_user(request, user_id):
-    if not request.session.get("is_admin"):
-        return redirect("login")
-
-    user = get_object_or_404(User, id=user_id)
-
-    if request.method == "POST":
-        form = ProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "User updated successfully.")
-            return redirect("admin_dashboard")
-    else:
-        form = ProfileForm(instance=user)
-
-    return render(request, "accounts/admin_edit_user.html", {"form": form, "user": user})
-
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
 def admin_delete_user(request, user_id):
-    if not request.session.get("is_admin"):
-        return redirect("login")
-
     user = get_object_or_404(User, id=user_id)
-
-    # L’admin ne peut PAS s’auto-supprimer
-    if user.id == request.session.get("user_id"):
-        messages.error(request, "You cannot delete your own admin account.")
-        return redirect("admin_dashboard")
-
+    if user.id == request.user.id:
+        return Response({"error": "Cannot delete self"}, status=status.HTTP_400_BAD_REQUEST)
+    
     user.delete()
-    messages.success(request, "User deleted successfully.")
-    return redirect("admin_dashboard")
+    return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
 
-
-
-# ---------------- ADMIN TOGGLE USER STATUS ----------------
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
 def toggle_user_status(request, user_id):
-    admin_id = request.session.get("user_id")
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = not user.is_active
+    user.save()
+    return Response({
+        "message": f"User status toggled. Active: {user.is_active}",
+        "user_id": user.id,
+        "is_active": user.is_active
+    })
 
-    if not admin_id:
-        return redirect("login")
-
-    admin = User.objects.get(id=admin_id)
-
-    if not admin.is_admin:
-        return redirect("home")
-
-    target = User.objects.get(id=user_id)
-    target.is_active = not target.is_active
-    target.save()
-
-    return redirect("admin_dashboard")
-
-from django.http import JsonResponse
-
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def health(request):
-    return JsonResponse({"status": "ok"})
-
-
+    return Response({"status": "ok"})

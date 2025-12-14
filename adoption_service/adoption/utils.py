@@ -1,11 +1,23 @@
 import requests
 
+ACCOUNTS_SERVICE_URL = "http://127.0.0.1:8001"
+
 def get_current_user_id(request):
+    """
+    Forward JWT token to accounts_service
+    and retrieve current user id
+    """
     try:
-        cookies = request.COOKIES  # on forward le cookie de session
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            return None
+
         response = requests.get(
-            "http://127.0.0.1:8001/api/me/",
-            cookies=cookies,
+            f"{ACCOUNTS_SERVICE_URL}/api/me/",
+            headers={
+                "Authorization": auth_header
+            },
             timeout=3
         )
 
@@ -15,5 +27,5 @@ def get_current_user_id(request):
         return response.json().get("id")
 
     except Exception as e:
-        print("Error fetching user from accounts_service:", e)
+        print("JWT verification failed:", e)
         return None

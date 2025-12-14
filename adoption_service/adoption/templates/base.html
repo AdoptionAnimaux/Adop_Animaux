@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>{% block title %}Adoption Project{% endblock %}</title>
 
@@ -10,173 +11,173 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-    :root {
-        --brown: #7F5539;
-        --light-brown: #A68A64;
-        --cream: #EDE0D4;
-        --soft-cream: #F8F4EF;
-        --olive: #656D4A;
-        --dark-olive: #414833;
+        :root {
+            --brown: #7F5539;
+            --light-brown: #A68A64;
+            --cream: #EDE0D4;
+            --soft-cream: #F8F4EF;
+            --olive: #656D4A;
+            --dark-olive: #414833;
 
-        --glass-bg: rgba(255, 255, 255, 0.55);
-        --glass-border: rgba(255, 255, 255, 0.35);
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.35);
 
-        --shadow-soft: 0 10px 28px rgba(0,0,0,0.12);
-        --shadow-hover: 0 14px 38px rgba(0,0,0,0.18);
+            --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.12);
+            --shadow-hover: 0 14px 38px rgba(0, 0, 0, 0.18);
 
-        --radius-lg: 22px;
-        --radius-md: 16px;
-        --radius-pill: 999px;
-    }
-
-    body {
-        font-family: "Poppins", sans-serif;
-        background:
-            radial-gradient(circle at top left, #EDE0D4 0%, #D8C3A5 35%, #B08968 80%);
-        padding-top: 90px;
-        color: var(--dark-olive);
-        min-height: 100vh;
-    }
-
-    /* ================= NAVBAR ================= */
-    .navbar-custom {
-        background: linear-gradient(
-            90deg,
-            rgba(248, 244, 239, 0.92),
-            rgba(237, 224, 212, 0.88),
-            rgba(166, 138, 100, 0.18)
-        );
-        backdrop-filter: blur(18px);
-        border-bottom: 1px solid rgba(127, 85, 57, 0.25);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .navbar-brand {
-        font-weight: 600;
-        font-size: 20px;
-        color: var(--dark-olive) !important;
-        letter-spacing: -0.02em;
-    }
-
-    .nav-link {
-        color: var(--olive) !important;
-        font-weight: 500;
-        padding: 6px 14px;
-        border-radius: var(--radius-pill);
-        transition: 0.25s ease;
-        font-size: 0.9rem;
-    }
-
-    .nav-link:hover {
-        background: rgba(127, 85, 57, 0.14);
-        color: var(--brown) !important;
-        text-decoration: none;
-        transform: translateY(-1px);
-    }
-
-    /* ================= CONTENT CARD ================= */
-    .content-box {
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        border-radius: var(--radius-lg);
-        padding: 34px;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
-        animation: softAppear 0.5s ease;
-    }
-
-    @keyframes softAppear {
-        from {
-            opacity: 0;
-            transform: translateY(12px);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background:
+                radial-gradient(circle at top left, #EDE0D4 0%, #D8C3A5 35%, #B08968 80%);
+            padding-top: 90px;
+            color: var(--dark-olive);
+            min-height: 100vh;
         }
-    }
 
-    /* ================= BUTTONS ================= */
-    .btn-primary {
-        background: linear-gradient(135deg, var(--brown), var(--light-brown));
-        border: none;
-        border-radius: var(--radius-pill);
-        padding: 10px 24px;
-        font-weight: 500;
-        box-shadow: 0 8px 20px rgba(127, 85, 57, 0.35);
-        transition: 0.25s ease;
-    }
+        /* ================= NAVBAR ================= */
+        .navbar-custom {
+            background: linear-gradient(90deg,
+                    rgba(248, 244, 239, 0.92),
+                    rgba(237, 224, 212, 0.88),
+                    rgba(166, 138, 100, 0.18));
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(127, 85, 57, 0.25);
+            box-shadow: var(--shadow-soft);
+        }
 
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-hover);
-        background: linear-gradient(135deg, #9C6644, var(--light-brown));
-    }
-
-    .btn-success {
-        background: linear-gradient(135deg, #6A8F7A, #8CB5A1);
-        border-radius: var(--radius-pill);
-        border: none;
-        padding: 10px 22px;
-        box-shadow: 0 6px 18px rgba(101, 109, 74, 0.35);
-        transition: 0.25s ease;
-    }
-
-    .btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-hover);
-        background: linear-gradient(135deg, #5E9D76, #7EBE9B);
-    }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 768px) {
-        .content-box {
-            padding: 24px;
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 20px;
+            color: var(--dark-olive) !important;
+            letter-spacing: -0.02em;
         }
 
         .nav-link {
-            margin-bottom: 6px;
+            color: var(--olive) !important;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            transition: 0.25s ease;
+            font-size: 0.9rem;
         }
-    }
-</style>
+
+        .nav-link:hover {
+            background: rgba(127, 85, 57, 0.14);
+            color: var(--brown) !important;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        /* ================= CONTENT CARD ================= */
+        .content-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 34px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            animation: softAppear 0.5s ease;
+        }
+
+        @keyframes softAppear {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brown), var(--light-brown));
+            border: none;
+            border-radius: var(--radius-pill);
+            padding: 10px 24px;
+            font-weight: 500;
+            box-shadow: 0 8px 20px rgba(127, 85, 57, 0.35);
+            transition: 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            background: linear-gradient(135deg, #9C6644, var(--light-brown));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #6A8F7A, #8CB5A1);
+            border-radius: var(--radius-pill);
+            border: none;
+            padding: 10px 22px;
+            box-shadow: 0 6px 18px rgba(101, 109, 74, 0.35);
+            transition: 0.25s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            background: linear-gradient(135deg, #5E9D76, #7EBE9B);
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 768px) {
+            .content-box {
+                padding: 24px;
+            }
+
+            .nav-link {
+                margin-bottom: 6px;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-    <div class="container-fluid d-flex justify-content-between">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container-fluid d-flex justify-content-between">
 
-        <a class="navbar-brand" href="/">🐾 Animal Adoption Center</a>
+            <a class="navbar-brand" href="/">🐾 Animal Adoption Center</a>
 
-        <ul class="navbar-nav">
+            <ul class="navbar-nav">
 
-            <li class="nav-item">
-                <a class="nav-link" href="/adoption/create/">Apply</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/adoption/create/">Apply</a>
+                </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="/adoption/list/1/">My Requests</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/adoption/list/1/">My Requests</a>
+                </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="/adoption/admin">Admin</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/adoption/admin">Admin</a>
+                </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="http://127.0.0.1:80/notifications/user/6/">🔔 My Notifications</a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://127.0.0.1:80/notifications/user/6/">🔔 My Notifications</a>
+                </li>
 
 
-        </ul>
+            </ul>
 
+        </div>
+    </nav>
+
+    <div class="container mt-4 content-box">
+        {% block content %}
+        {% endblock %}
     </div>
-</nav>
-
-<div class="container mt-4 content-box">
-    {% block content %}
-    {% endblock %}
-</div>
 
 </body>
+
 </html>

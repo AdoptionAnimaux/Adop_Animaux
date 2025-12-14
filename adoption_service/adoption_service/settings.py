@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -142,26 +143,62 @@ CONSUL_HOST = os.environ.get('CONSUL_HOST', 'consul')
 CONSUL_PORT = int(os.environ.get('CONSUL_PORT', 8500))
 
 
+
+# ...
 REST_FRAMEWORK = {
-'DEFAULT_RENDERER_CLASSES': (
-   'rest_framework.renderers.JSONRenderer',
-  'rest_framework.renderers.JSONRenderer',
-),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'adoption.authentication.StatelessJWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
+# Simple JWT Configuration (for verification of signing key)
+# We must use the SAME secret key as accounts_service or configure RS256. 
+# Assuming symmetric HS256 with same SECRET_KEY across services for simplicity in this student project,
+# OR we need to know how they share keys. 
+# The brief says "SEUL accounts_service génère le JWT", "Les autres... Vérifient le JWT via JWTAuthentication".
+# For HS256 to work, they need the same secret key.
+# The `settings.py` for adoption uses a different SECRET_KEY by default from startproject. 
+# We should ideally use the same key or a shared env var.
+# I will set the signing key to be configurable via env or use the one from accounts if hardcoded (not recommended but likely for this level).
+# Wait, let's look at accounts settings again. "django-insecure-!%@s%_+o8+c5y1ooxx6y+3j67^3+76iroo67lxc43f5qj41l$a"
+# Adoption has: "django-insecure-!e^$%sa!34yzt^+3orbinabf4@n+b&8-w^+ly5$sm@ff6evkuo"
+# THEY MUST MATCH for HS256. I will add a comment or update it. 
+# Since I cannot easily change the user's environment variables, I will hardcode the key from accounts_service here 
+# to Ensure it works, or better, simply rely on `SIMPLE_JWT` default utilizing `SECRET_KEY` and set `SECRET_KEY` to be the same.
+# Or better, explicit SIMPLE_JWT config.
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': 'django-insecure-!%@s%_+o8+c5y1ooxx6y+3j67^3+76iroo67lxc43f5qj41l$a', # MATCHING ACCOUNTS SERVICE
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), # Sync with accounts_service
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_CLAIM': 'user_id',
 }
 
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "../ui_service/static",
-    BASE_DIR / "adoption/static",
+    BASE_DIR / "static",
 ]
 
 TRAEFIK_BASE_URL = "http://localhost:80"
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_NAME = "shared_session"
-SESSION_COOKIE_DOMAIN = "127.0.0.1"
-SESSION_COOKIE_PATH = "/"
 
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
+# Consul / Service Configuration
+CONSUL_HOST = 'localhost'
+CONSUL_PORT = 8500
+SERVICE_NAME = 'adoption-service'
+SERVICE_ID = 'adoption-1'
+SERVICE_PORT = 8003
+
+
+# Removed Session/Cookies stuff as it is strictly Forbidden
+# SESSION_ENGINE = ...
+
+
+ACCOUNTS_SERVICE_URL = "http://127.0.0.1:8001"

@@ -1,0 +1,148 @@
+{% extends 'shared/base.html' %}
+{% block title %}Request Adoption{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    .info-box {
+        background: #eef;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        color: #335;
+    }
+
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        min-height: 100px;
+        margin-bottom: 20px;
+        font-family: inherit;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 15px;
+        background: var(--brown);
+        /* Using var from base.html */
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .back {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: #888;
+        text-decoration: none;
+    }
+</style>
+
+<div class="container">
+    <h1>Request Adoption</h1>
+
+    <div class="info-box">
+        Requesting adoption for Animal ID: <strong id="animalIdDisplay"></strong>
+    </div>
+
+    <form id="adoptForm">
+        <label>Why do you want to adopt?</label>
+        <textarea id="reason" required placeholder="Tell us about your home and experience..."></textarea>
+
+        <button type="submit" class="btn">Submit Request</button>
+    </form>
+
+    <a href="http://127.0.0.1:8002/" class="back">Cancel & Back to Catalog</a>
+</div>
+
+<script>
+    // Auth Check (Stateless / Cookie Bridge logic not strict here, assuming localStorage)
+    // Check for token in Cookies (Cross-Port Bridge from Animals Service 8002)
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+
+    const cookieToken = getCookie('access_token');
+    const cookieUser = getCookie('user_info');
+
+    if (cookieToken) {
+        localStorage.setItem('access_token', cookieToken);
+        if (cookieUser) {
+            localStorage.setItem('user_info', decodeURIComponent(cookieUser));
+        }
+        // Clear cookies
+        document.cookie = "access_token=; path=/; max-age=0";
+        document.cookie = "user_info=; path=/; max-age=0";
+    }
+
+    // Auth Check
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = 'http://127.0.0.1:8001/login/';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const animalId = urlParams.get('animal_id');
+    document.getElementById('animalIdDisplay').innerText = animalId;
+
+    document.getElementById('adoptForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const reason = document.getElementById('reason').value;
+
+        try {
+            const response = await fetch('/api/client/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    animal_id: animalId,
+                    reason: reason
+                })
+            });
+
+            if (response.ok) {
+                alert('Adoption Request Submitted Successfully!');
+                window.location.href = 'http://127.0.0.1:8002/'; // Back to catalog
+            } else {
+                const err = await response.json();
+                alert('Error: ' + JSON.stringify(err));
+            }
+        } catch (error) {
+            alert('Error submitting request: ' + error.message);
+        }
+    });
+</script>
+{% endblock %}

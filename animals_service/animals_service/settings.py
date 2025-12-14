@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+from datetime import timedelta
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -140,12 +142,42 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 DEV_MODE = True
 
-TRAEFIK_BASE_URL = "http://localhost:80"
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_NAME = "shared_session"
-SESSION_COOKIE_DOMAIN = "127.0.0.1"
-SESSION_COOKIE_PATH = "/"
 
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
+# ...
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'animals.authentication.StatelessJWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
+# Use same signing key as accounts_service
+SIMPLE_JWT = {
+    'SIGNING_KEY': 'django-insecure-!%@s%_+o8+c5y1ooxx6y+3j67^3+76iroo67lxc43f5qj41l$a', # MATCHING ACCOUNTS SERVICE
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'JTI_CLAIM': 'jti',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=60),  # Touch to reload
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+TRAEFIK_BASE_URL = "http://localhost:80"
+
+# Removed Session/Cookies stuff
+# SESSION_ENGINE = ...
+
+# Consul / Service Configuration
+CONSUL_HOST = 'localhost'
+CONSUL_PORT = 8500
+SERVICE_NAME = 'animals-service'
+SERVICE_ID = 'animals-1'
+SERVICE_PORT = 8002

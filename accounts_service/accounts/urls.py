@@ -1,24 +1,36 @@
 from django.urls import path
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 from . import views
 
-from .views import (
-    login_view, logout_view, home, profile, delete_account,
-    admin_dashboard, admin_edit_user, toggle_user_status
-)
-
 urlpatterns = [
+    # Auth (Standard SimpleJWT + Custom Login wrapper if needed, 
+    # but strictly implementing the requested views)
+    path('login/', views.login_page, name='ui_login'),
+    path('register/', views.register_page, name='ui_register'),
+    path('profile/', views.profile_page, name='ui_profile'),
+    path('admin-dashboard/', views.admin_dashboard_page, name='ui_admin_dashboard'),
+    path('home/', views.home_page, name='ui_home'),
+
+    # Auth API
+    path('api/login/', views.login_view, name='login'),
+    path('api/register/', views.register, name='register'),
     
-    path("accounts/", views.accounts_home, name="accounts_home"),
-    path("login/", login_view, name="login"),
-    path("logout/", logout_view, name="logout"),
-    path("home/", home, name="home"),
-    path("profile/", profile, name="profile"),
-    path("delete-account/", delete_account, name="delete_account"),
-    path("accounts/health/", views.health),
+    # Token Standard Endpoints (Optional but good practice)
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # User
+    path('api/me/', views.current_user, name='current_user'),
+    path('api/delete-account/', views.delete_account, name='delete_account'),
 
     # Admin
-    path("admin/dashboard/", admin_dashboard, name="admin_dashboard"),
-    path("admin/edit/<int:user_id>/", admin_edit_user, name="admin_edit_user"),
-    path("admin/toggle/<int:user_id>/", toggle_user_status, name="toggle_user_status"),
+    path('api/admin/users/', views.admin_list_users, name='admin_list_users'),
+    path('api/admin/users/<int:user_id>/delete/', views.admin_delete_user, name='admin_delete_user'),
+    path('api/admin/users/<int:user_id>/toggle/', views.toggle_user_status, name='toggle_user_status'),
+
+    # Health
+    path('accounts/health/', views.health, name='health'),
 ]

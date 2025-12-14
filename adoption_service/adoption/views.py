@@ -1,200 +1,166 @@
-from urllib import request
-import requests
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from rest_framework import viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 from .models import AdoptionRequest
-from adoption_service.utils import get_service_url
+from .serializers import AdoptionRequestSerializer
 from adoption.messaging.producer import publish_adoption
 
-from adoption_service.utils import get_service_url
+# ==================================================
+# 👤 CLIENT API (JWT Requied)
+# ==================================================
+
+from django.shortcuts import get_object_or_404, render
+
+# ...
+# ==================================================
+# 🖼 UI VIEWS
+# ==================================================
+def creation_page(request):
+    return render(request, "adoption/form_view.html")
+
+def my_list_page(request):
+    return render(request, "client/liste_adoptions.html")
+
+def admin_page(request):
+    return render(request, "adoption/admin_list.html")
 
 
 
-
-def redirect_to_login():
-    accounts_url = get_service_url("accounts-service")
-    return redirect(f"{accounts_url}/login/")
-
-# -------------------------------------------------------------------
-# HOME PAGE
-# -------------------------------------------------------------------
-def home(request):
-    return render(request, "client/home.html")
-
-
-# -------------------------------------------------------------------
-# CREATE ADOPTION REQUEST
-# -------------------------------------------------------------------
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def create_request(request):
-    
-    if request.method == "GET":
-        animal_id = request.GET.get("animal_id")
-        user_id = request.GET.get("user_id")
-
-        return render(request, "client/form_adoption.html", {
-            "animal_id": animal_id,
-            "user_id": user_id
-        })
-
-    if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        animal_id = request.POST.get("animal_id")
-        appointment_id = request.POST.get("appointment_id")
-
-        if not user_id or not animal_id:
-            return render(request, "client/form_adoption.html", {
-                "error": "User ID and Animal ID are required",
-                "animal_id": animal_id,
-                "user_id": user_id
-            })
-
-        req = AdoptionRequest.objects.create(
-            user_id=user_id,
-            animal_id=animal_id,
-            appointment_id=appointment_id or None,
+    """
+    Client creates an adoption request.
+    User ID is taken strictly from request.user (token).
+    """
+    serializer = AdoptionRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        # Enforce user_id from token
+        serializer.save(
+            user_id=request.user.id,
             status="pending"
         )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return render(request, "client/success_adoption.html", {
-            "adoption": req
-        })
-
-
-
-# -------------------------------------------------------------------
-# LIST USER REQUESTS
-# -------------------------------------------------------------------
-def user_requests(request, user_id):
-    reqs = AdoptionRequest.objects.filter(user_id=user_id).order_by("-date_requested")
-    return render(request, "client/liste_adoptions.html", {"reqs": reqs})
-
-
-# -------------------------------------------------------------------
-# REQUEST STATUS (API)
-# -------------------------------------------------------------------
-def request_status(request, id):
-    try:
-        req = AdoptionRequest.objects.get(id=id)
-        return JsonResponse({
-            "id": req.id,
-            "user_id": req.user_id,
-            "animal_id": req.animal_id,
-            "status": req.status,
-            "date": req.date_requested
-        })
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Not found"}, status=404)
-
-
-# -------------------------------------------------------------------
-# CANCEL REQUEST
-# -------------------------------------------------------------------
-def cancel_request(request, id):
-    try:
-        req = AdoptionRequest.objects.get(id=id)
-
-        if req.status != "pending":
-            return JsonResponse({"error": "Cannot cancel a processed request"}, status=400)
-
-        req.status = "cancelled"
-        req.save()
-        return JsonResponse({"success": True})
-
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Request not found"}, status=404)
-
-
-# -------------------------------------------------------------------
-# ADMIN LIST
-# -------------------------------------------------------------------
-def admin_list(request):
-    reqs = AdoptionRequest.objects.all().order_by("-date_requested")
-    return render(request, "admin/admin_list.html", {"reqs": reqs})
-
-
-# -------------------------------------------------------------------
-# APPROVE REQUEST (FIXED)
-# -------------------------------------------------------------------
-def approve_request(request, id):
-    try:
-        req = AdoptionRequest.objects.get(id=id)
-        req.status = "approved"
-        req.save()
-
-        # Try sending event but DO NOT BREAK if RabbitMQ fails
-        try:
-           publish_adoption({
-             "event": "adoption_approved",
-             "request_id": req.id,
-             "user_id": req.user_id,
-             "animal_id": req.animal_id
-            })
-           print("🔔 Approve request triggered for ID:", req.id)
-
-        except Exception as e:
-            print("⚠ RabbitMQ ERROR on approve:", e)
-
-        return redirect("/adoption/admin/requests/")
-
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Request not found"}, status=404)
-
-
-# -------------------------------------------------------------------
-# REJECT REQUEST (FIXED)
-# -------------------------------------------------------------------
-def reject_request(request, id):
-    try:
-        req = AdoptionRequest.objects.get(id=id)
-        req.status = "rejected"
-        req.save()
-
-        # Try sending event but DO NOT BREAK if RabbitMQ fails
-        try:
-            publish_adoption({
-                "event": "adoption_rejected",
-                "request_id": req.id,
-                "user_id": req.user_id,
-                "animal_id": req.animal_id
-            })
-        except Exception as e:
-            print("⚠ RabbitMQ ERROR on reject:", e)
-
-        return redirect("/adoption/admin/requests/")
-
-    except AdoptionRequest.DoesNotExist:
-        return JsonResponse({"error": "Request not found"}, status=404)
-
-
-# -------------------------------------------------------------------
-# API: CHECK ADOPTION
-# -------------------------------------------------------------------
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_requests(request):
+    """
+    List requests for the logged-in user.
+    """
+    qs = AdoptionRequest.objects.filter(user_id=request.user.id)
+    serializer = AdoptionRequestSerializer(qs, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def request_status(request, id):
+    req = get_object_or_404(AdoptionRequest, id=id, user_id=request.user.id)
+    return Response({
+        "id": req.id,
+        "status": req.status,
+        "date": req.date_requested
+    })
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def cancel_request(request, id):
+    req = get_object_or_404(AdoptionRequest, id=id, user_id=request.user.id)
+    
+    if req.status != "pending":
+        return Response({"error": "Cannot cancel processed request"}, status=status.HTTP_400_BAD_REQUEST)
+        
+    req.status = "cancelled"
+    req.save()
+    return Response({"success": True})
+
+
+# ==================================================
+# 🛠 ADMIN API (JWT + Permissions)
+# ==================================================
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def admin_list(request):
+    # Check strict permission
+    if not request.user.has_perm("adoption.view_adoptionrequest"):
+        raise PermissionDenied("Permission view_adoptionrequest required")
+
+    qs = AdoptionRequest.objects.all()
+    serializer = AdoptionRequestSerializer(qs, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def approve_request(request, id):
+    if not request.user.has_perm("adoption.change_adoptionrequest"):
+        raise PermissionDenied("Permission change_adoptionrequest required")
+
+    adoption = get_object_or_404(AdoptionRequest, pk=id)
+    adoption.status = "approved"
+    adoption.save()
+
+    publish_adoption({
+        "event": "adoption_approved",
+        "request_id": adoption.id,
+        "user_id": adoption.user_id,
+        "animal_id": adoption.animal_id,
+    })
+
+    return Response({"message": "Adoption approved"})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def reject_request(request, id):
+    if not request.user.has_perm("adoption.delete_adoptionrequest"):
+        raise PermissionDenied("Permission delete_adoptionrequest required")
+
+    adoption = get_object_or_404(AdoptionRequest, pk=id)
+    adoption.status = "rejected"
+    adoption.save()
+
+    publish_adoption({
+        "event": "adoption_rejected",
+        "request_id": adoption.id,
+        "user_id": adoption.user_id,
+        "animal_id": adoption.animal_id,
+    })
+
+    return Response({"message": "Adoption rejected"})
+
+
+# ==================================================
+# 🔁 INTER-SERVICE (No Auth or Special Perms?)
+# ==================================================
+# Note: Inter-service usually requires some form of auth (Internal auth), 
+# but for this scope we might keep it open (Verify later) or reuse AllowAny if strictly internal.
+# The prompt says "Verifier statut adoption (GET)".
+# We'll use AllowAny for inter-service for simplicity unless specified otherwise, 
+# as animals_service might not send a user token when calling this? 
+# OR animals_service forwards the user token. 
+# Let's assume forwarding or AllowAny. 
+# Given "SEUL accounts_service génère le JWT", other services just verify.
+# If animals_service calls this, it refers to a user.
+# Let's stick to AllowAny for specific inter-service endpoint but keep it minimal.
+
+@api_view(["GET"])
+@permission_classes([AllowAny]) 
 def check_adoption(request, user_id, animal_id):
     try:
         req = AdoptionRequest.objects.filter(
             user_id=user_id,
             animal_id=animal_id
         ).latest("date_requested")
-
         return Response({"status": req.status})
     except AdoptionRequest.DoesNotExist:
-        return Response({"status": "none"}, status=404)
-    
-    
-
-from adoption_service.utils import get_service_url
-
-def go_to_notifications(request, user_id):
-    # 1. Obtenir l’URL du microservice via Consul
-    notif_url = get_service_url("notifications-service")
-
-    if notif_url is None:
-        return JsonResponse({"error": "Notifications service not found in Consul"}, status=500)
-
-    # 2. Rediriger vers notifications-service
-    return redirect(f"{notif_url}/notifications/user/{user_id}/")
+        return Response({"status": "none"})

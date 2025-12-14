@@ -49,7 +49,12 @@ def register_consul_service():
             service_id=settings.SERVICE_ID,
             address=os.environ.get('SERVICE_IP', 'localhost'), # Use the IP from the environment or default
             port=settings.SERVICE_PORT,
-            tags=['django', 'account', 'v1'],
+            tags=[
+                'django', 'account', 'v1',
+                'traefik.enable=true',
+                'traefik.http.routers.accounts.rule=PathPrefix(`/accounts`)',
+                'traefik.http.routers.accounts.entrypoints=web'
+            ],
             check=check
         )
         

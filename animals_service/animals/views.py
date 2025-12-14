@@ -1,239 +1,118 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.db.models import Q
-
-from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework import generics, viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404, render
+import requests
 
 from .models import Animal
-from .forms import AnimalForm
 from .serializers import AnimalSerializer
 
-from django.shortcuts import render
-
-
-def animals_home(request):
-    animals = Animal.objects.all()
-    return render(request, "animals/catalog.html", {
-        "animals": animals
-    })
-
-
-# ============================
-# FILTER SYSTEM
-# ============================
-
-def filter_animals(request):
-    qs = Animal.objects.all().order_by("-created_at")
-
-    q = request.GET.get("q")
-    species = request.GET.get("type")
-    breed = request.GET.get("breed")
-    age = request.GET.get("age")
-    location = request.GET.get("location")
-    vaccinated = request.GET.get("vaccinated")
-
-    if q:
-        qs = qs.filter(
-            Q(name__icontains=q) |
-            Q(description__icontains=q) |
-            Q(breed__icontains=q)
-        )
-    if species:
-        qs = qs.filter(type__icontains=species)
-    if breed:
-        qs = qs.filter(breed__icontains=breed)
-    if age:
-        qs = qs.filter(age__icontains=age)
-    if location:
-        qs = qs.filter(location__icontains=location)
-    if vaccinated == "true":
-        qs = qs.filter(vaccinated=True)
-
-    return qs
-
-
-# ============================
-# CLIENT (USER) VIEWS
-# ============================
-
+# ==================================================
+# 🖼 UI VIEWS
+# ==================================================
+# ==================================================
+# 🖼 UI VIEWS
+# ==================================================
 def catalog_view(request):
-    user_id = request.GET.get("user_id")
-    print("🔥 USER ID IN ANIMALS =", user_id)
-    animals = Animal.objects.all()
-    return render(request, "animals/catalog.html", {"animals": animals, "user_id": user_id})
+    return render(request, "animals/catalog.html")
 
+def admin_page(request):
+    return render(request, "animals/admin_list.html")
 
-@api_view(["POST"])
-def mark_animal_adopted(request, pk):
-    animal = get_object_or_404(Animal, pk=pk)
-    animal.status = "adopted"
-    animal.save()
-    return Response({"message": "Animal marked as adopted"})
-
-def animal_detail(request, pk):
-    animal = get_object_or_404(Animal, pk=pk)
-    return render(request, "animals/detail.html", {"animal": animal})
-
-
-def client_propose_animal(request):
-    if request.method == "POST":
-        form = AnimalForm(request.POST)
-        if form.is_valid():
-            animal = form.save(commit=False)
-            animal.status = "pending"
-            animal.submitted_by_user = True
-            animal.save()
-            messages.success(request, "Animal proposal sent for validation.")
-            return redirect("catalog")
-    else:
-        form = AnimalForm()
-
-    return render(request, "animals/propose.html", {"form": form})
-
-
-# ============================
-# ADMIN VIEWS
-# ============================
-
-def admin_dashboard(request):
-    total_animals = Animal.objects.count()
-    pending_animals = Animal.objects.filter(status="pending").count()
-    adopted_animals = Animal.objects.filter(status="adopted").count()
-
-    form = AnimalForm()   
-
-    return render(request, "animals/admin_dashboard.html", {
-        "total_animals": total_animals,
-        "pending_animals": pending_animals,
-        "adopted_animals": adopted_animals,
-        "form": form,     
-    })
-
-
-def admin_manage_animals(request):
-    animals = Animal.objects.all()
-    return render(request, "animals/admin_manage.html", {"animals": animals})
-
-
-def admin_pending(request):
-    animals = Animal.objects.filter(status="pending")
-    return render(request, "animals/admin_pending.html", {"animals": animals})
-
-
-
-def admin_adopted_animals(request):
-    animals = Animal.objects.filter(status="adopted")
-    return render(request, "animals/admin_adopted.html", {"animals": animals})
-
-
-def admin_edit_animal(request, pk):
-    animal = get_object_or_404(Animal, pk=pk)
-
-    if request.method == "POST":
-        form = AnimalForm(request.POST, instance=animal)
-        if form.is_valid():
-            form.save()
-            return redirect("admin_manage_animals")
-    else:
-        form = AnimalForm(instance=animal)
-
-    return render(request, "animals/admin_edit.html", {"form": form, "animal": animal})
-
-
-def admin_delete_animal(request, pk):
-    animal = get_object_or_404(Animal, pk=pk)
-    animal.delete()
-    return redirect("admin_manage_animals")
-
-
-# ============================
-# API
-# ============================
+# ==================================================
+# 👤 CLIENT API (Public or Authenticated)
+# ==================================================
 
 class AnimalListCreateAPI(generics.ListCreateAPIView):
+    """
+    List animals (Public)
+    Create animal (Propose animal - authenticated users)
+    """
+    queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
+    
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return [AllowAny()] # List is public
 
-    def get_queryset(self):
-        return filter_animals(self.request)
+    def perform_create(self, serializer):
+        serializer.save(
+            status='available', # Pending/Available logic
+            submitted_by_user=True
+        )
 
 
 class AnimalRetrieveUpdateDestroyAPI(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve (Public)
+    Update/Delete (Owner or Admin)
+    """
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
+    permission_classes = [AllowAny] # We handle granular permissions inside or override
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def perform_update(self, serializer):
+        # Only admin can update (since ownership is not tracked in Model)
+        print(f"DEBUG: Update Animal. User={self.request.user.username}")
+        
+        if not self.request.user.has_perm('animals.change_animal'):
+            raise PermissionDenied("Admin permission required")
+            
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if not self.request.user.has_perm('animals.delete_animal'):
+             raise PermissionDenied("Admin permission required")
+        instance.delete()
 
 
-@api_view(["POST"])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def request_adoption_api(request, pk):
+    """
+    User requests to adopt an animal.
+    Calls adoption_service.
+    """
     animal = get_object_or_404(Animal, pk=pk)
-
-    if animal.status != "available":
+    
+    # Check if available
+    if animal.status != 'available':
         return Response({"error": "Animal not available"}, status=400)
-
-    animal.status = "reserved"
-    animal.save()
-    return Response({"message": "Adoption request sent"})
+    
+    return Response({"message": "Please use Adoption Service API to request adoption"}, status=302)
 
 
-@api_view(["POST"])
+# ==================================================
+# 🛠 ADMIN API
+# ==================================================
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def approve_animal_api(request, pk):
+    if not request.user.has_perm('animals.change_animal'):
+        raise PermissionDenied("Admin permission required")
+        
     animal = get_object_or_404(Animal, pk=pk)
-    animal.status = "available"
-    animal.submitted_by_user = False
+    animal.status = 'available'
     animal.save()
-    return redirect("admin_pending")
+    return Response({"message": "Animal approved/available"})
 
 
-@api_view(["POST"])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def reject_animal_api(request, pk):
+    if not request.user.has_perm('animals.delete_animal'): # or change
+        raise PermissionDenied("Admin permission required")
+        
     animal = get_object_or_404(Animal, pk=pk)
-    animal.delete()
-    return redirect("admin_pending")
-
-def admin_delete_animal(request, pk):
-    animal = get_object_or_404(Animal, id=pk)
-    animal.delete()
-    return redirect('admin_manage_animals')
-
-
-def admin_edit_animal(request, pk):
-    animal = get_object_or_404(Animal, id=pk)
-
-    if request.method == "POST":
-        form = AnimalForm(request.POST, instance=animal)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_manage_animals')
-    else:
-        form = AnimalForm(instance=animal)
-
-    return render(request, "animals/admin_edit.html", {"form": form, "animal": animal})
-
-
-def admin_reserved_animals(request):
-    if not is_admin(request):
-        return redirect("catalog")
-
-    animals = Animal.objects.filter(status="reserved")
-    return render(request, "animals/admin_reserved.html", {"animals": animals})
-
-
-
-def admin_add_animal(request):
-
-    if request.method == "POST":
-        form = AnimalForm(request.POST)
-        if form.is_valid():
-            animal = form.save(commit=False)
-            animal.status = "available"   # ADMIN = auto approved
-            animal.submitted_by_user = False
-            animal.save()
-            return redirect("admin_dashboard")
-    else:
-        form = AnimalForm()
-
-    return render(request, "animals/admin_dashboard.html", {
-
-    })
-
+    animal.status = 'rejected'
+    animal.save()
+    return Response({"message": "Animal rejected"})

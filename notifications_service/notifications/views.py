@@ -1,58 +1,38 @@
-from django.shortcuts import render, redirect
-import requests
-
-from .models import Notification
- 
 from django.shortcuts import render
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from .models import Notification
+from .serializers import NotificationSerializer
 
-def notifications_home(request):
-    return render(request, "notifications/index.html")
+# UI View
+def ui_notifications_list(request):
+    return render(request, "notifications/list.html")
 
+# ==================================================
+# 👤 USER API
+# ==================================================
 
-def get_user_id_from_accounts(request):
-    """
-    Calls accounts_service to know who is logged in.
-    Uses cookies to forward session.
-    """
-    try:
-        r = requests.get(
-            "http://127.0.0.1:8001/api/me/",
-            cookies=request.COOKIES,
-            timeout=3
-        )
-        if r.status_code != 200:
-            return None
-        return r.json().get("id")
-    except Exception as e:
-        print("ERROR calling accounts_service /api/me/:", e)
-        return None
-
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def my_notifications(request):
-    user_id = request.session.get("user_id")
-
-    if not user_id:
-        return redirect("http://127.0.0.1:8001/login/")
-
-    return redirect("user_notifications", user_id=user_id)
-
-
-def user_notifications(request):
     """
-    Show notifications for the currently logged-in user
-    (user_id stored in session by accounts_service)
+    Get notifications for the logged-in user.
+    Uses request.user.id from the verified JWT.
     """
-    user_id = request.session.get("user_id")
-
-    
-
     notifications = Notification.objects.filter(
-        user_id=user_id
+        user_id=request.user.id
     ).order_by("-created_at")
+    
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
 
-    return render(request, "notifications/user_notifications.html", {"notifications": notifications})
 
-from django.http import JsonResponse
+# ==================================================
+# 🛠 SYSTEM/ADMIN API
+# ==================================================
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def health(request):
-    return JsonResponse({"status": "ok"})
+    return Response({"status": "ok"})

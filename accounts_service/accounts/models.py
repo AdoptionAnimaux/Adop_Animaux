@@ -1,29 +1,49 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
-class User(models.Model):
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Email address is required')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_admin', True)
+        extra_fields.setdefault('is_superuser', True) # Needed for admin panel if used
+        extra_fields.setdefault('is_staff', True)
+        return self.create_user(email, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20)
-    address = models.TextField()
+    phone = models.CharField(max_length=20, blank=True)
+    address = models.TextField(blank=True)
 
-    # mot de passe hashé (plus de default password123)
-    password = models.CharField(max_length=128)
-
-    # Rôle + statut
-    is_admin = models.BooleanField(default=False)
+    # Status
     is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    # is_staff required for admin interface access/AbstractUser compatibility
+    is_staff = models.BooleanField(default=False) 
 
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+    objects = UserManager()
 
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['firstname', 'lastname']
 
     def __str__(self):
-        return f"{self.firstname} {self.lastname}"
+        return self.email
+        
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+        
+    def has_module_perms(self, app_label):
+        return self.is_admin

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Adoption App{% endblock %}</title>
@@ -9,237 +10,273 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<style>
-/* =================================================
+    <style>
+        /* =================================================
    GLOBAL THEME — MODERN / SOFT / GLASS
    Palette officielle :
    #7F5539 #A68A64 #EDE0D4 #656D4A #414833
 ================================================= */
 
-:root {
-    --brown: #7F5539;
-    --light-brown: #A68A64;
-    --cream: #EDE0D4;
-    --olive: #656D4A;
-    --dark-olive: #414833;
-}
+        :root {
+            --brown: #7F5539;
+            --light-brown: #A68A64;
+            --cream: #EDE0D4;
+            --olive: #656D4A;
+            --dark-olive: #414833;
+        }
 
-/* ================= BODY ================= */
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: radial-gradient(circle at top left,
-        #EDE0D4 0%,
-        #D8C3A5 40%,
-        #B08968 85%);
-    color: var(--dark-olive);
-}
+        /* ================= BODY ================= */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top left,
+                    #EDE0D4 0%,
+                    #D8C3A5 40%,
+                    #B08968 85%);
+            color: var(--dark-olive);
+        }
 
-/* Soft overlay for readability */
-.background-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(4px);
-    z-index: -1;
-}
+        /* Soft overlay for readability */
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: -1;
+        }
 
-/* ================= NAVBAR ================= */
-/* ================= NAVBAR ONLY (ISOLATED) ================= */
+        /* ================= NAVBAR ================= */
+        /* ================= NAVBAR ONLY (ISOLATED) ================= */
 
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-    padding: 16px 42px;
+            padding: 16px 42px;
 
-    /* Dark warm glass */
-    background: linear-gradient(
-        90deg,
-        rgba(65, 72, 51, 0.88),
-        rgba(127, 85, 57, 0.82)
-    );
+            /* Dark warm glass */
+            background: linear-gradient(90deg,
+                    rgba(65, 72, 51, 0.88),
+                    rgba(127, 85, 57, 0.82));
 
-    backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
 
-    /* Rounded navbar shape */
-    border-radius: 0 0 26px 26px;
+            /* Rounded navbar shape */
+            border-radius: 0 0 26px 26px;
 
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-    box-shadow:
-        0 12px 32px rgba(0,0,0,0.35),
-        inset 0 -1px 0 rgba(255,255,255,0.06);
-}
+            box-shadow:
+                0 12px 32px rgba(0, 0, 0, 0.35),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        }
 
-/* Brand — scoped */
-.navbar .brand {
-    font-size: 20px;
-    font-weight: 600;
-    color: #F5EFE8;
-    text-decoration: none;
-}
+        /* Brand — scoped */
+        .navbar .brand {
+            font-size: 20px;
+            font-weight: 600;
+            color: #F5EFE8;
+            text-decoration: none;
+        }
 
-/* Right container — scoped */
-.navbar .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-}
+        /* Right container — scoped */
+        .navbar .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
 
-/* Links — scoped */
-.navbar a {
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
+        /* Links — scoped */
+        .navbar a {
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
 
-    color: rgba(245, 239, 232, 0.92);
+            color: rgba(245, 239, 232, 0.92);
 
-    padding: 8px 14px;
-    border-radius: 999px;
+            padding: 8px 14px;
+            border-radius: 999px;
 
-    transition: background 0.2s ease, color 0.2s ease;
-}
+            transition: background 0.2s ease, color 0.2s ease;
+        }
 
-/* Hover — scoped */
-.navbar a:hover {
-    background: rgba(255,255,255,0.14);
-    color: #FFFFFF;
-}
+        /* Hover — scoped */
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #FFFFFF;
+        }
 
-/* Notification icon — scoped */
-.navbar .nav-notification {
-    position: relative;
-    font-size: 18px;
-}
+        /* Notification icon — scoped */
+        .navbar .nav-notification {
+            position: relative;
+            font-size: 18px;
+        }
 
-/* Notification badge — scoped */
-.navbar .nav-notification span {
-    position: absolute;
-    top: -7px;
-    right: -9px;
+        /* Notification badge — scoped */
+        .navbar .nav-notification span {
+            position: absolute;
+            top: -7px;
+            right: -9px;
 
-    background: #EDE0D4;
-    color: #414833;
+            background: #EDE0D4;
+            color: #414833;
 
-    font-size: 10px;
-    font-weight: 700;
+            font-size: 10px;
+            font-weight: 700;
 
-    padding: 3px 7px;
-    border-radius: 999px;
+            padding: 3px 7px;
+            border-radius: 999px;
 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-}
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        }
 
 
-/* ================= MAIN ================= */
-main {
-    padding: 42px 60px;
-}
+        /* ================= MAIN ================= */
+        main {
+            padding: 42px 60px;
+        }
 
-/* ================= GLASS PANELS ================= */
-.glass {
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(18px);
-    border-radius: 18px;
-    padding: 26px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    border: 1px solid rgba(127,85,57,0.2);
-}
+        /* ================= GLASS PANELS ================= */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(18px);
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(127, 85, 57, 0.2);
+        }
 
-/* ================= FOOTER ================= */
-.footer {
-    margin-top: 90px;
-    padding: 36px;
-    text-align: center;
-    font-size: 14px;
+        /* ================= FOOTER ================= */
+        .footer {
+            margin-top: 90px;
+            padding: 36px;
+            text-align: center;
+            font-size: 14px;
 
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(127,85,57,0.25);
-}
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(127, 85, 57, 0.25);
+        }
 
-.footer h3 {
-    margin-bottom: 10px;
-    color: var(--dark-olive);
-}
+        .footer h3 {
+            margin-bottom: 10px;
+            color: var(--dark-olive);
+        }
 
-.footer p {
-    margin: 6px 0;
-    color: rgba(65,72,51,0.85);
-}
+        .footer p {
+            margin: 6px 0;
+            color: rgba(65, 72, 51, 0.85);
+        }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 900px) {
-    main {
-        padding: 28px;
-    }
-    .navbar {
-        padding: 14px 24px;
-    }
-}
-</style>
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 900px) {
+            main {
+                padding: 28px;
+            }
+
+            .navbar {
+                padding: 14px 24px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="background-overlay"></div>
+    <div class="background-overlay"></div>
 
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar">
-    <div class="nav-left">
-        <a href="http://127.0.0.1:8001/" class="brand">🐾 Adoption Animaux</a>
-    </div>
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="http://127.0.0.1:8001/" class="brand">🐾 Adoption Animaux</a>
+        </div>
 
-    <div class="nav-right">
-                <a href="http://127.0.0.1:80/animals">Catalogue 🐾</a>
-        <!-- accounts_service -->
-        <a href="http://127.0.0.1:8001/home">Mon compte</a>
+        <div class="nav-right">
+            <!-- Catalogue (8002) -->
+            <a href="#" onclick="navigateTo('http://127.0.0.1:8002/')" class="nav-link">Catalogue 🐾</a>
 
+            <!-- Accounts (8001) -->
+            <a href="#" onclick="navigateTo('http://127.0.0.1:8001/home')" class="nav-link">Mon compte</a>
 
+            <!-- Adoptions (8003) -->
+            <a href="#" onclick="navigateTo('http://127.0.0.1:8003/adoption/my/')" class="nav-link">Mes
+                adoptions</a>
 
-
-        <!-- adoption_service -->
-        <a href="http://127.0.0.1:80/adoption/list/1/">Mes adoptions</a>
-
-        <!-- notifications (adoption_service) -->
-
-        <a href="http://127.0.0.1:80/notifications/user/{{ user_id }}/" class="nav-link notif-link">
-            🔔 Notifications
-            {% if notifications_count %}
+            <!-- Notifications (8004) -->
+            <a href="#" onclick="navigateTo('http://127.0.0.1:8004/notifications/')" class="nav-link notif-link">
+                🔔 Notifications
+                {% if notifications_count %}
                 <span class="notif-badge">{{ notifications_count }}</span>
-            {% endif %}
-        </a>
+                {% endif %}
+            </a>
+
+            <a href="#about-section">À propos</a>
+        </div>
+    </nav>
+
+    <script>
+        function navigateTo(url) {
+            // Cookie Bridge: Transfer Token via Cookies
+            const token = localStorage.getItem('access_token');
+            const user = localStorage.getItem('user_info');
+
+            if (token) {
+                document.cookie = `access_token=${token}; path=/; max-age=60; SameSite=Lax`;
+                if (user) document.cookie = `user_info=${encodeURIComponent(user)}; path=/; max-age=60; SameSite=Lax`;
+            }
+
+            window.location.href = url;
+        }
+
+        // Cookie Bridge: RECEIVER Logic (Runs on every page load)
+        (function () {
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            const cookieToken = getCookie('access_token');
+            const cookieUser = getCookie('user_info');
+
+            if (cookieToken) {
+                console.log("Bridge: Received new token from cookie.");
+                localStorage.setItem('access_token', cookieToken);
+                // Clear cookie to prevent re-reading old one later (optional, but good hygiene)
+                document.cookie = "access_token=; path=/; max-age=0; SameSite=Lax";
+            }
+            if (cookieUser) {
+                try {
+                    localStorage.setItem('user_info', decodeURIComponent(cookieUser));
+                    document.cookie = "user_info=; path=/; max-age=0; SameSite=Lax";
+                } catch (e) { console.error("Bridge User Parse Error", e); }
+            }
+        })();
+    </script>
 
 
-        <a href="#about-section">À propos</a>
-    </div>
-</nav>
+    <!-- ================= CONTENT ================= -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
+    <!-- ================= FOOTER ================= -->
+    <footer id="about-section" class="footer">
+        <h3>À propos</h3>
+        <p>
+            Plateforme d’adoption d’animaux — architecture microservices
 
-<!-- ================= CONTENT ================= -->
-<main>
-    {% block content %}
-    {% endblock %}
-</main>
-
-<!-- ================= FOOTER ================= -->
-<footer id="about-section" class="footer">
-    <h3>À propos</h3>
-    <p>
-        Plateforme d’adoption d’animaux — architecture microservices
-        (Django · Consul · RabbitMQ · Traefik)
-    </p>
-    <p>Développé avec ❤️ pour aider les animaux à trouver un foyer.</p>
-</footer>
+        </p>
+        <p>Développé avec ❤️ pour aider les animaux à trouver un foyer.</p>
+    </footer>
 
 </body>
+
 </html>
-
-

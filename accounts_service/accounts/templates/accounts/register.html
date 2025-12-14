@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Create Account – Accounts</title>
@@ -11,14 +12,10 @@
             --text-main: #463F3A;
             --text-soft: #6B6058;
             --danger: #CC3D3D;
-
             --glass-bg: rgba(255, 255, 255, 0.55);
             --glass-border: rgba(255, 255, 255, 0.35);
-
             --shadow-soft: 0 30px 60px rgba(0, 0, 0, 0.18);
-
             --radius-lg: 26px;
-            --radius-md: 18px;
         }
 
         * {
@@ -31,19 +28,15 @@
             height: 100vh;
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             color: var(--text-main);
-
-            background:
-                linear-gradient(rgba(250,243,231,0.55), rgba(232,211,191,0.55)),
+            background: linear-gradient(rgba(250, 243, 231, 0.55), rgba(232, 211, 191, 0.55)),
                 url("https://images.unsplash.com/photo-1548199973-03cce0bbc87b");
             background-size: cover;
             background-position: center;
-
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* ================= CARD ================= */
         .card {
             width: 100%;
             max-width: 620px;
@@ -69,22 +62,10 @@
             text-align: center;
         }
 
-        /* ================= FORM ================= */
         form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px 18px;
-        }
-
-        form p {
-            margin: 0;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Force full-width rows (password confirm, button) */
-        .full {
-            grid-column: 1 / -1;
+            gap: 14px;
         }
 
         label {
@@ -97,9 +78,10 @@
             padding: 10px 12px;
             border-radius: 12px;
             border: 1px solid rgba(176, 137, 104, 0.35);
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             font-size: 14px;
             outline: none;
+            width: 100%;
         }
 
         input:focus {
@@ -108,7 +90,6 @@
         }
 
         .btn {
-            grid-column: 1 / -1;
             margin-top: 8px;
             padding: 12px;
             border-radius: 14px;
@@ -137,67 +118,83 @@
             text-decoration: none;
         }
 
-        .bottom a:hover {
-            text-decoration: underline;
-        }
-
         .alert {
-            grid-column: 1 / -1;
-            background: rgba(255,220,200,0.95);
+            background: rgba(255, 220, 200, 0.95);
             border-left: 4px solid var(--danger);
             padding: 10px 12px;
             border-radius: 10px;
             font-size: 13px;
+            color: var(--danger);
+            display: none;
         }
-        /* ================= ADDRESS FIELD ================= */
-textarea {
-    resize: none;                 /* Disable resize (important for layout) */
-    min-height: 90px;              /* Compact but readable */
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(176, 137, 104, 0.35);
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 14px;
-    outline: none;
-    line-height: 1.4;
-}
-
-/* Focus effect */
-textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(176, 137, 104, 0.45);
-}
-
     </style>
 </head>
 
 <body>
 
-<div class="card">
+    <div class="card">
+        <h2 class="title">Create your account 🐾</h2>
+        <p class="subtitle">Join the adoption platform.</p>
 
-    <h2 class="title">Create your account 🐾</h2>
-    <p class="subtitle">
-        Join the adoption platform and manage your requests easily.
-    </p>
+        <div id="alert" class="alert"></div>
 
-    <form method="post" autocomplete="off">
-        {% csrf_token %}
+        <form id="registerForm">
+            <label>Email</label>
+            <input type="email" id="email" required>
 
-        <!-- Autofill breakers -->
-        <input type="text" name="fakeuser" style="display:none">
-        <input type="password" name="fakepass" style="display:none">
+            <label>First Name</label>
+            <input type="text" id="firstname" required>
 
-        {{ form.as_p }}
+            <label>Last Name</label>
+            <input type="text" id="lastname" required>
 
-        <button class="btn" type="submit">Register</button>
-    </form>
+            <label>Password</label>
+            <input type="password" id="password" required>
 
-    <p class="bottom">
-        Already have an account?
-        <a href="/login/">Login here</a>
-    </p>
+            <button class="btn" type="submit">Register</button>
+        </form>
 
-</div>
+        <p class="bottom">
+            Already have an account? <a href="/login/">Login here</a>
+        </p>
+
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('alert');
+            alertBox.style.display = 'none';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const firstname = document.getElementById('firstname').value;
+            const lastname = document.getElementById('lastname').value;
+
+            try {
+                const response = await fetch('/api/register/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, firstname, lastname })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Account created! Redirecting to login...');
+                    window.location.href = '/login/';
+                } else {
+                    alertBox.textContent = JSON.stringify(data.email || data.password || 'Error creating account');
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                alertBox.textContent = 'Server error.';
+                alertBox.style.display = 'block';
+            }
+        });
+    </script>
 
 </body>
+
 </html>

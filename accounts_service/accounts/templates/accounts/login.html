@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Login – Accounts</title>
-
     <style>
         :root {
             --accent: #B08968;
             --accent-dark: #A67C5B;
-
             --text-main: #463F3A;
             --text-soft: #6B6058;
-
             --danger: #CC3D3D;
-
             --glass-bg: rgba(255, 255, 255, 0.55);
             --glass-border: rgba(255, 255, 255, 0.35);
-
             --shadow-soft: 0 30px 60px rgba(0, 0, 0, 0.18);
-
             --radius-lg: 26px;
             --radius-md: 18px;
         }
@@ -33,24 +28,15 @@
             height: 100vh;
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             color: var(--text-main);
-
-            /* ===== BACKGROUND IMAGE ===== */
-            background:
-                linear-gradient(
-                    rgba(250, 243, 231, 0.55),
-                    rgba(232, 211, 191, 0.55)
-                ),
-                url("https://images.unsplash.com/photo-1548199973-03cce0bbc87b");
+            background: linear-gradient(rgba(250, 243, 231, 0.55), rgba(232, 211, 191, 0.55)), url("https://images.unsplash.com/photo-1548199973-03cce0bbc87b");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* ================= LAYOUT ================= */
         .layout {
             width: 100%;
             max-width: 1200px;
@@ -61,7 +47,6 @@
             padding: 40px;
         }
 
-        /* ================= LEFT SIDE ================= */
         .left {
             display: flex;
             flex-direction: column;
@@ -120,7 +105,6 @@
             line-height: 1.4;
         }
 
-        /* ================= RIGHT SIDE (LOGIN) ================= */
         .right {
             display: flex;
             align-items: center;
@@ -160,10 +144,6 @@
             margin-bottom: 22px;
         }
 
-        form p {
-            margin-bottom: 14px;
-        }
-
         label {
             display: block;
             font-size: 13px;
@@ -179,6 +159,7 @@
             background: rgba(255, 255, 255, 0.9);
             font-size: 14px;
             outline: none;
+            margin-bottom: 14px;
         }
 
         input:focus {
@@ -216,10 +197,6 @@
             text-decoration: none;
         }
 
-        .link:hover {
-            text-decoration: underline;
-        }
-
         .alert {
             background: rgba(255, 220, 200, 0.95);
             border-left: 4px solid var(--danger);
@@ -227,80 +204,116 @@
             border-radius: 10px;
             font-size: 13px;
             margin-bottom: 14px;
+            display: none;
+            color: var(--danger);
         }
     </style>
 </head>
 
 <body>
 
-<div class="layout">
-
-    <!-- LEFT SIDE -->
-    <section class="left">
-        <div class="brand">Animal Adoption Platform</div>
-
-        <h1 class="headline">
-            Every animal<br>
-            deserves a home.
-        </h1>
-
-        <p class="description">
-            Discover animals available for adoption, follow the adoption
-            process, and receive notifications — all in one secure platform.
-        </p>
-
-        <div class="features">
-            <div class="feature">
-                <h3>🐾 Animal Catalog</h3>
-                <p>Browse animals with detailed profiles and photos.</p>
+    <div class="layout">
+        <section class="left">
+            <div class="brand">Animal Adoption Platform</div>
+            <h1 class="headline">Every animal<br>deserves a home.</h1>
+            <p class="description">Discover animals available for adoption, follow the adoption process, and receive
+                notifications.</p>
+            <div class="features">
+                <div class="feature">
+                    <h3>🐾 Animal Catalog</h3>
+                    <p>Browse animals with detailed profiles.</p>
+                </div>
+                <div class="feature">
+                    <h3>📄 Adoption Requests</h3>
+                    <p>Submit and track adoption requests.</p>
+                </div>
+                <div class="feature">
+                    <h3>🔔 Notifications</h3>
+                    <p>Get notified when your status changes.</p>
+                </div>
+                <div class="feature">
+                    <h3>🔐 Secure Accounts</h3>
+                    <p>Your personal data is protected.</p>
+                </div>
             </div>
+        </section>
 
-            <div class="feature">
-                <h3>📄 Adoption Requests</h3>
-                <p>Submit and track adoption requests step by step.</p>
+        <section class="right">
+            <div class="card">
+                <div class="logo">Accounts Service</div>
+                <div class="title">Welcome back</div>
+                <div class="subtitle">Sign in to continue.</div>
+
+                <div id="alert" class="alert"></div>
+
+                <form id="loginForm" autocomplete="off">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="admin@example.com">
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+
+                    <button class="btn" type="submit">Login</button>
+                </form>
+
+                <p class="bottom">
+                    Don’t have an account? <a class="link" href="/register/">Create one</a>
+                </p>
             </div>
+        </section>
+    </div>
 
-            <div class="feature">
-                <h3>🔔 Notifications</h3>
-                <p>Get notified when your adoption status changes.</p>
-            </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-            <div class="feature">
-                <h3>🔐 Secure Accounts</h3>
-                <p>Your personal data is protected and private.</p>
-            </div>
-        </div>
-    </section>
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const alertBox = document.getElementById('alert');
 
-    <!-- RIGHT SIDE -->
-    <section class="right">
-        <div class="card">
+            alertBox.style.display = 'none';
 
-            <div class="logo">Accounts Service</div>
-            <div class="title">Welcome back</div>
-            <div class="subtitle">Sign in to continue.</div>
+            try {
+                const response = await fetch('/api/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
+                const data = await response.json();
 
-            <form method="post" autocomplete="off">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn" type="submit">Login</button>
-            </form>
 
-            <p class="bottom">
-                Don’t have an account?
-                <a class="link" href="/register/">Create one</a>
-            </p>
+                if (response.ok) {
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    localStorage.setItem('user_info', JSON.stringify(data.user));
 
-        </div>
-    </section>
+                    // Cookie Bridge: Set cookie for cross-port transfer (Short lived)
+                    document.cookie = `access_token=${data.access}; path=/; max-age=60; SameSite=Lax`;
+                    document.cookie = `user_info=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=60; SameSite=Lax`;
 
-</div>
+                    alert('Login successful! Redirecting to Catalog...');
+                    window.location.href = 'http://127.0.0.1:8002/';
+                } else {
+                    alertBox.textContent = data.error || 'Login failed';
+                    alertBox.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alertBox.textContent = 'An error occurred. Check console.';
+                alertBox.style.display = 'block';
+            }
+        });
+
+        // Simple auth check on load
+        if (localStorage.getItem('access_token')) {
+            // Already logged in
+            // console.log("User already has a token");
+        }
+    </script>
 
 </body>
+
 </html>

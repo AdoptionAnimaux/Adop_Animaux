@@ -8,18 +8,24 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
     "django.contrib.staticfiles",
-        "django.contrib.sessions",
-
     "rest_framework",
     "notifications",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",  # ✅ REQUIRED
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
@@ -27,17 +33,20 @@ ROOT_URLCONF = "notifications_service.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.request",
-            ]
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "DIRS": [
+            BASE_DIR / "../ui_service/templates",
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
         },
     },
 ]
-
 
 WSGI_APPLICATION = "notifications_service.wsgi.application"
 
@@ -55,16 +64,34 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
 RABBITMQ_QUEUE = os.environ.get("RABBITMQ_QUEUE", "notifications_queue")
 
+
+# ...
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'notifications.authentication.StatelessJWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
+# Use same signing key as accounts_service
+SIMPLE_JWT = {
+    'SIGNING_KEY': 'django-insecure-!%@s%_+o8+c5y1ooxx6y+3j67^3+76iroo67lxc43f5qj41l$a',
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_CLAIM': 'user_id',
+}
+
 TRAEFIK_BASE_URL = "http://localhost:80"
-# settings.py (ALL SERVICES)
 
-SECRET_KEY = "django-insecure-=&96#t4&pcgu(48@obm3x@(0&!o2d^q*=_m7)++-^i9mh*s5c5"
+# Consul config
+CONSUL_HOST = os.environ.get('CONSUL_HOST', 'localhost')
+CONSUL_PORT = int(os.environ.get('CONSUL_PORT', 8500))
+SERVICE_NAME = "notifications-service"
+SERVICE_PORT = int(os.environ.get('SERVICE_PORT', 8004))
+SERVICE_ID = "notifications-service-1"
 
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_NAME = "shared_session"
-SESSION_COOKIE_DOMAIN = "127.0.0.1"
-SESSION_COOKIE_PATH = "/"
-
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"

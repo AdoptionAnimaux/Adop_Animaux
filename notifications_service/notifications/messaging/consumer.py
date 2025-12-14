@@ -15,17 +15,19 @@ def callback(ch, method, properties, body):
         print("⚠ Ignoring message (invalid format)")
         return
 
+    animal_name = data.get("animal_name", f"References #{data['animal_id']}")
+
     # Construire le message à afficher
     msg = ""
     if data["event"] == "adoption_approved":
         msg = (
             f"Votre demande d'adoption de l'animal "
-            f"{data['animal_name']} a été ACCEPTÉE 🎉"
+            f"{animal_name} a été ACCEPTÉE 🎉"
         )
     elif data["event"] == "adoption_rejected":
         msg = (
             f"Votre demande d'adoption de l'animal "
-            f"{data['animal_name']} a été REFUSÉE ❌"
+            f"{animal_name} a été REFUSÉE ❌"
         )
     else:
         msg = f"Notification reçue : {data}"
