@@ -7,6 +7,24 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'notifications_service.settings')
+
+    # --- Consul Registration ---
+    if "runserver" in sys.argv:
+        try:
+            # Add project root to sys.path to allow importing 'shared'
+            current_path = os.path.dirname(os.path.abspath(__file__))
+            sys.path.append(os.path.join(current_path, ".."))
+            
+            from shared.consul_client import register_service
+            register_service(
+                name="notifications-service",
+                port=8004,
+                prefix="notifications"
+            )
+        except Exception as e:
+            print(f"⚠️ Warning: Could not register with Consul: {e}")
+    # ---------------------------
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

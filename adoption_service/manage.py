@@ -7,6 +7,24 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adoption_service.settings')
+
+    # --- Consul Registration ---
+    if "runserver" in sys.argv:
+        try:
+            # Add project root to sys.path to allow importing 'shared'
+            current_path = os.path.dirname(os.path.abspath(__file__))
+            sys.path.append(os.path.join(current_path, ".."))
+            
+            from shared.consul_client import register_service
+            register_service(
+                name="adoption-service",
+                port=8003,
+                prefix="adoption"
+            )
+        except Exception as e:
+            print(f"⚠️ Warning: Could not register with Consul: {e}")
+    # ---------------------------
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
