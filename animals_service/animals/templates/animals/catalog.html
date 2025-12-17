@@ -1,3 +1,4 @@
+Fifi, [12/15/2025 10:16 AM]
 {% extends 'shared/base.html' %}
 {% block title %}Animals Catalog{% endblock %}
 
@@ -181,7 +182,8 @@
         margin: 15px 0;
     }
 
-    .disabled-btn {
+    Fifi,
+    [12/15/2025 10:16 AM] .disabled-btn {
         display: block;
         width: 100%;
         padding: 12px;
@@ -260,7 +262,7 @@
         window.location.href = 'http://127.0.0.1:8001/login/';
     }
 
-    document.getElementById('userInfo').innerText = 'Hello, ' + (user.email || 'User');
+    document.getElementById('userInfo').innerText = 'Hello, ' + (user.first_name || 'User');
 
     function logout() {
         localStorage.removeItem('access_token');
@@ -290,6 +292,7 @@
                 grid.innerHTML = '<p>No animals found.</p>';
                 return;
             }
+
 
             animals.forEach(a => {
                 // 1. Render Card
@@ -372,7 +375,7 @@
                                 Added on ${new Date(a.created_at || Date.now()).toLocaleDateString()}
                             </p>
                         </div>
-                    `;
+                `;
                 modals.appendChild(modal);
             });
 
@@ -388,7 +391,7 @@
         const user = localStorage.getItem('user_info');
 
         if (token) {
-            document.cookie = `access_token=${token}; path=/; max-age=60; SameSite=Lax`;
+            document.cookie = `access_token = ${token}; path =/; max-age=60; SameSite=Lax`;
             if (user) document.cookie = `user_info=${encodeURIComponent(user)}; path=/; max-age=60; SameSite=Lax`;
         }
 
