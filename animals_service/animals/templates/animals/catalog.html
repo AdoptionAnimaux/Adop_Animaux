@@ -260,7 +260,7 @@
         window.location.href = 'http://127.0.0.1:8001/login/';
     }
 
-    document.getElementById('userInfo').innerText = 'Hello, ' + (user.email || 'User');
+    document.getElementById('userInfo').innerText = 'Hello, ' + (user.firstname || 'User');
 
     function logout() {
         localStorage.removeItem('access_token');
@@ -296,7 +296,7 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                        <img src="${a.image || '/static/img/animal-placeholder.jpg'}" alt="${a.name}">
+                        <img src="${a.photo_url || '/static/img/animal-placeholder.jpg'}" alt="${a.name}">
                         <h3>${a.name}</h3>
                         <p class="status-badge status-${a.status}">${a.status}</p>
                         <br>
@@ -342,7 +342,7 @@
                         <div class="panel-content">
                             <a href="#" class="close-panel">×</a>
                             
-                            <img src="${a.image || '/static/img/animal-placeholder.jpg'}" class="panel-img">
+                            <img src="${a.photo_url || '/static/images/meow.jpg'}" class="panel-img">
                             <h2>${a.name}</h2>
                             <span class="status-badge status-${a.status}">${a.status}</span>
 
