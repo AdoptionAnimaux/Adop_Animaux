@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'adoption',
+    'adoption.apps.AdoptionConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +71,7 @@ TEMPLATES = [
         },
     },
 ]
+ALLOWED_HOSTS = ["*"]
 
 WSGI_APPLICATION = 'adoption_service.wsgi.application'
 
