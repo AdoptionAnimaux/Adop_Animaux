@@ -121,16 +121,16 @@
 
     <!-- Navigation to other Admin Services -->
     <div class="service-cards">
-        <div class="service-card" onclick="navigateTo('http://127.0.0.1:8002/admin/animals/')">
-            <span class="card-icon">🐾</span>
-            <div class="card-title">Manage Animals</div>
-            <p>Validate, Edit, Delete Animals</p>
+        <div class="service-card" onclick="navigateTo('/animals/admin-panel/animals/')">
+            <div class="icon">🐾</div>
+            <h3>Animals Service</h3>
+            <p>Manage animal listings</p>
         </div>
 
-        <div class="service-card" onclick="navigateTo('http://127.0.0.1:8003/adoption/admin/')">
-            <span class="card-icon">📄</span>
-            <div class="card-title">Manage Adoptions</div>
-            <p>Approve/Reject Requests</p>
+        <div class="service-card" onclick="navigateTo('/adoption/admin-panel/')">
+            <div class="icon">📄</div>
+            <h3>Adoption Service</h3>
+            <p>Manage adoption requests</p>
         </div>
 
         <div class="service-card" style="opacity: 0.5; cursor: default;">
@@ -154,12 +154,12 @@
     const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
     if (!userInfo.is_admin) {
         alert("Access Denied: You are not an administrator.");
-        window.location.href = '/home';
+        window.location.href = '/accounts/home/';
     }
 
     async function loadUsers() {
         try {
-            const response = await fetch('/api/admin/users/', {
+            const response = await fetch('/accounts/api/admin-panel/users/', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
             const users = await response.json();
@@ -208,7 +208,7 @@
 
     async function toggleUser(id) {
         if (!confirm("Are you sure?")) return;
-        await fetch(`/api/admin/users/${id}/toggle/`, {
+        await fetch(`/accounts/api/admin-panel/users/${id}/toggle/`, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -217,7 +217,7 @@
 
     async function deleteUser(id) {
         if (!confirm("Delete this user permanently?")) return;
-        await fetch(`/api/admin/users/${id}/delete/`, {
+        await fetch(`/accounts/api/admin-panel/users/${id}/delete/`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         });

@@ -257,7 +257,7 @@
                 </form>
 
                 <p class="bottom">
-                    Don’t have an account? <a class="link" href="/register/">Create one</a>
+                    Don’t have an account? <a class="link" href="/accounts/register/">Create one</a>
                 </p>
             </div>
         </section>
@@ -274,7 +274,7 @@
             alertBox.style.display = 'none';
 
             try {
-                const response = await fetch('/api/login/', {
+                const response = await fetch('/accounts/api/login/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -295,7 +295,7 @@
                     document.cookie = `user_info=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=60; SameSite=Lax`;
 
                     alert('Login successful! Redirecting to Catalog...');
-                    window.location.href = 'http://127.0.0.1:8002/';
+                    window.location.href = '/animals/';
                 } else {
                     alertBox.textContent = data.error || 'Login failed';
                     alertBox.style.display = 'block';

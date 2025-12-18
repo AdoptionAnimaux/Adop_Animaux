@@ -9,6 +9,11 @@ from .models import AdoptionRequest
 from .serializers import AdoptionRequestSerializer
 from adoption.messaging.producer import publish_adoption
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health(request):
+    return Response({"status": "ok"})
+
 # ==================================================
 # 👤 CLIENT API (JWT Requied)
 # ==================================================
@@ -102,8 +107,8 @@ def admin_list(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def approve_request(request, id):
-    if not request.user.has_perm("adoption.change_adoptionrequest"):
-        raise PermissionDenied("Permission change_adoptionrequest required")
+    if not getattr(request.user, 'is_superuser', False):
+        raise PermissionDenied("Admin access required")
 
     adoption = get_object_or_404(AdoptionRequest, pk=id)
     adoption.status = "approved"
@@ -122,8 +127,8 @@ def approve_request(request, id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def reject_request(request, id):
-    if not request.user.has_perm("adoption.delete_adoptionrequest"):
-        raise PermissionDenied("Permission delete_adoptionrequest required")
+    if not getattr(request.user, 'is_superuser', False):
+        raise PermissionDenied("Admin access required")
 
     adoption = get_object_or_404(AdoptionRequest, pk=id)
     adoption.status = "rejected"

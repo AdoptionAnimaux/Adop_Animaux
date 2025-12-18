@@ -55,7 +55,7 @@
 <div class="admin-container">
     <div class="header">
         <h1>🐾 Inventory Manager</h1>
-        <a href="#" onclick="navigateTo('http://127.0.0.1:8001/admin-dashboard/')" style="color: #7F5539;">Back to
+        <a href="#" onclick="navigateTo('/accounts/admin-panel/')" style="color: #7F5539;">Back to
             Dashboard</a>
     </div>
     <div id="animalsList">Loading...</div>
@@ -85,7 +85,7 @@
 
     async function loadAnimals() {
         try {
-            const response = await fetch('/api/animals/', { headers: { 'Authorization': 'Bearer ' + token } });
+            const response = await fetch('/animals/api/animals/', { headers: { 'Authorization': 'Bearer ' + token } });
             if (!response.ok) throw new Error("Failed to load animals");
             const animals = await response.json();
 
@@ -113,7 +113,7 @@
 
     async function updateStatus(id, action) {
         if (!confirm("Confirm action?")) return;
-        const endpoint = action === 'approve' ? `/api/admin/animals/${id}/approve/` : `/api/admin/animals/${id}/reject/`;
+        const endpoint = action === 'approve' ? `/animals/api/admin-panel/animals/${id}/approve/` : `/animals/api/admin-panel/animals/${id}/reject/`;
         await fetch(endpoint, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token }
@@ -142,7 +142,7 @@
         };
 
         try {
-            const res = await fetch(`/api/animals/${id}/`, {
+            const res = await fetch(`/animals/api/animals/${id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': 'Bearer ' + token,

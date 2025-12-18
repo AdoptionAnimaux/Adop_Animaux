@@ -9,6 +9,11 @@ import requests
 from .models import Animal
 from .serializers import AnimalSerializer
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health(request):
+    return Response({"status": "ok"})
+
 # ==================================================
 # 🖼 UI VIEWS
 # ==================================================
@@ -97,7 +102,7 @@ def request_adoption_api(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def approve_animal_api(request, pk):
-    if not request.user.has_perm('animals.change_animal'):
+    if not getattr(request.user, 'is_superuser', False):
         raise PermissionDenied("Admin permission required")
         
     animal = get_object_or_404(Animal, pk=pk)
@@ -109,7 +114,7 @@ def approve_animal_api(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def reject_animal_api(request, pk):
-    if not request.user.has_perm('animals.delete_animal'): # or change
+    if not getattr(request.user, 'is_superuser', False):
         raise PermissionDenied("Admin permission required")
         
     animal = get_object_or_404(Animal, pk=pk)

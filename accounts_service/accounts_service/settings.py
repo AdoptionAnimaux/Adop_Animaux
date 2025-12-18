@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-!%@s%_+o8+c5y1ooxx6y+3j67^3+76iroo67lxc43f5qj41l$a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/accounts'
+
 
 
 

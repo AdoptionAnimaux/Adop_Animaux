@@ -82,12 +82,12 @@
     // Auth Check
     const token = localStorage.getItem('access_token');
     if (!token) {
-        window.location.href = 'http://127.0.0.1:8001/login/';
+        window.location.href = '/accounts/login/';
     }
 
     async function loadRequests() {
         try {
-            const response = await fetch('/api/client/my/', {
+            const response = await fetch('/adoption/client/my/', {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }

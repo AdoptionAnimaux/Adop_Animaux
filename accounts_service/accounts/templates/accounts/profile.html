@@ -7,7 +7,7 @@
     <script>
         // Protect this page
         if (!localStorage.getItem('access_token')) {
-            window.location.href = '/login/';
+            window.location.href = '/accounts/login/';
         }
     </script>
     <style>
@@ -154,10 +154,10 @@
     <script>
         const token = localStorage.getItem('access_token');
 
-        if (!token) window.location.href = '/login/';
+        if (!token) window.location.href = '/accounts/login/';
 
         async function loadData() {
-            const res = await fetch('/api/me/', {
+            const res = await fetch('/accounts/api/me/', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -174,7 +174,7 @@
 
         async function deleteAccount() {
             if (!confirm("Are you sure? This is irreversible.")) return;
-            await fetch('/api/delete-account/', {
+            await fetch('/accounts/api/delete-account/', {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -183,7 +183,7 @@
 
         function logout() {
             localStorage.clear();
-            window.location.href = '/login/';
+            window.location.href = '/accounts/login/';
         }
 
         loadData();

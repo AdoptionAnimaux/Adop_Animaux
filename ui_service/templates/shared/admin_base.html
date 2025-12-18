@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Admin Dashboard{% endblock %}</title>
@@ -7,136 +8,134 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-<style>
-/* ================= ADMIN NAVBAR ONLY ================= */
+    <style>
+        /* ================= ADMIN NAVBAR ONLY ================= */
 
-.admin-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1100;
+        .admin-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1100;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-    padding: 16px 42px;
+            padding: 16px 42px;
 
-    /* Darker & more authoritative */
-    background: linear-gradient(
-        90deg,
-        rgba(65, 72, 51, 0.92),
-        rgba(65, 72, 51, 0.78)
-    );
+            /* Darker & more authoritative */
+            background: linear-gradient(90deg,
+                    rgba(65, 72, 51, 0.92),
+                    rgba(65, 72, 51, 0.78));
 
-    backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
 
-    border-radius: 0 0 26px 26px;
+            border-radius: 0 0 26px 26px;
 
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-    box-shadow:
-        0 14px 36px rgba(0,0,0,0.42),
-        inset 0 -1px 0 rgba(255,255,255,0.06);
-}
+            box-shadow:
+                0 14px 36px rgba(0, 0, 0, 0.42),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        }
 
-/* Left side */
-.admin-navbar .admin-nav-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+        /* Left side */
+        .admin-navbar .admin-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.admin-navbar .admin-brand {
-    font-size: 18px;
-    font-weight: 600;
-    color: #F5EFE8;
-}
+        .admin-navbar .admin-brand {
+            font-size: 18px;
+            font-weight: 600;
+            color: #F5EFE8;
+        }
 
-/* ADMIN pill */
-.admin-navbar .admin-pill {
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    padding: 4px 10px;
-    border-radius: 999px;
+        /* ADMIN pill */
+        .admin-navbar .admin-pill {
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            border-radius: 999px;
 
-    background: rgba(237,224,212,0.18);
-    border: 1px solid rgba(237,224,212,0.35);
-    color: #F5EFE8;
-}
+            background: rgba(237, 224, 212, 0.18);
+            border: 1px solid rgba(237, 224, 212, 0.35);
+            color: #F5EFE8;
+        }
 
-/* Right links */
-.admin-navbar .admin-nav-right {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-}
+        /* Right links */
+        .admin-navbar .admin-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
 
-/* Links */
-.admin-navbar a {
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
+        /* Links */
+        .admin-navbar a {
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
 
-    color: rgba(245,239,232,0.9);
+            color: rgba(245, 239, 232, 0.9);
 
-    padding: 8px 14px;
-    border-radius: 999px;
+            padding: 8px 14px;
+            border-radius: 999px;
 
-    transition: background 0.2s ease, color 0.2s ease;
-}
+            transition: background 0.2s ease, color 0.2s ease;
+        }
 
-/* Hover */
-.admin-navbar a:hover {
-    background: rgba(255,255,255,0.14);
-    color: #FFFFFF;
-}
+        /* Hover */
+        .admin-navbar a:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #FFFFFF;
+        }
 
-/* Logout emphasis */
-.admin-navbar .admin-logout {
-    background: rgba(127,85,57,0.22);
-    border: 1px solid rgba(127,85,57,0.45);
-}
+        /* Logout emphasis */
+        .admin-navbar .admin-logout {
+            background: rgba(127, 85, 57, 0.22);
+            border: 1px solid rgba(127, 85, 57, 0.45);
+        }
 
-.admin-navbar .admin-logout:hover {
-    background: rgba(127,85,57,0.35);
-}
-
-</style>
+        .admin-navbar .admin-logout:hover {
+            background: rgba(127, 85, 57, 0.35);
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- ADMIN NAVBAR -->
-<!-- ================= ADMIN NAVBAR ================= -->
-<nav class="admin-navbar">
-    <div class="admin-nav-left">
-        <span class="admin-brand">
-            🛠️ Admin Panel
-        </span>
-        <span class="admin-pill">ADMIN</span>
-    </div>
+    <!-- ADMIN NAVBAR -->
+    <!-- ================= ADMIN NAVBAR ================= -->
+    <nav class="admin-navbar">
+        <div class="admin-nav-left">
+            <span class="admin-brand">
+                🛠️ Admin Panel
+            </span>
+            <span class="admin-pill">ADMIN</span>
+        </div>
 
-    <div class="admin-nav-right">
-        <!-- accounts_service -->
-        <a href="http://127.0.0.1:8001/admin/dashboard/">Accounts</a>
+        <div class="admin-nav-right">
+            <!-- accounts_service -->
+            <a href="/accounts/admin-panel/">Accounts</a>
 
-        <!-- animals_service -->
-        <a href="http://127.0.0.1:8002/admin/">Animals</a>
+            <!-- animals_service -->
+            <a href="/animals/admin-panel/animals/">Animals</a>
 
-        <!-- adoptions_service -->
-                <a class="nav-link" href="http://127.0.0.1:8003/admin/requests/">Admin</a>
+            <!-- adoptions_service -->
+            <a class="nav-link" href="/adoption/admin-panel/">Adoptions</a>
 
-        <!-- logout -->
-        <a href="http://127.0.0.1:8001/logout/" class="admin-logout">
-            Logout
-        </a>
-    </div>
-</nav>
+            <!-- logout -->
+            <a href="/accounts/logout/" class="admin-logout">
+                Logout
+            </a>
+        </div>
+    </nav>
 
 
-<main>
-    {% block content %}{% endblock %}
-</main>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
 </body>
+
 </html>

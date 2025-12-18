@@ -194,22 +194,22 @@
     <!-- ================= NAVBAR ================= -->
     <nav class="navbar">
         <div class="nav-left">
-            <a href="http://127.0.0.1:8001/" class="brand">🐾 Adoption Animaux</a>
+            <a href="/accounts/" class="brand">🐾 Adoption Animaux</a>
         </div>
 
         <div class="nav-right">
-            <!-- Catalogue (8002) -->
-            <a href="#" onclick="navigateTo('http://127.0.0.1:8002/')" class="nav-link">Catalogue 🐾</a>
+            <!-- Catalogue (via Traefik /animals) -->
+            <a href="#" onclick="navigateTo('/animals/')" class="nav-link">Catalogue 🐾</a>
 
-            <!-- Accounts (8001) -->
-            <a href="#" onclick="navigateTo('http://127.0.0.1:8001/home')" class="nav-link">Mon compte</a>
+            <!-- Accounts (via Traefik /accounts) -->
+            <a href="#" onclick="navigateTo('/accounts/home/')" class="nav-link">Mon compte</a>
 
-            <!-- Adoptions (8003) -->
-            <a href="#" onclick="navigateTo('http://127.0.0.1:8003/adoption/my/')" class="nav-link">Mes
+            <!-- Adoptions (via Traefik /adoption) -->
+            <a href="#" onclick="navigateTo('/adoption/my/')" class="nav-link">Mes
                 adoptions</a>
 
-            <!-- Notifications (8004) -->
-            <a href="#" onclick="navigateTo('http://127.0.0.1:8004/notifications/')" class="nav-link notif-link">
+            <!-- Notifications (via Traefik /notifications) -->
+            <a href="#" onclick="navigateTo('/notifications/')" class="nav-link notif-link">
                 🔔 Notifications
                 {% if notifications_count %}
                 <span class="notif-badge">{{ notifications_count }}</span>

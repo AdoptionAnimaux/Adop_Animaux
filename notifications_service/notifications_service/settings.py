@@ -5,7 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "replace-me"
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/notifications'
 
 INSTALLED_APPS = [
     "django.contrib.admin",

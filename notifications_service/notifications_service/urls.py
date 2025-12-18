@@ -12,8 +12,5 @@ def root_view(request):
     })
 
 urlpatterns = [
-    path("", root_view),
-    # App urls are mapped to root, so it becomes /api/notifications/
-    path("notifications/", include("notifications.urls")),
     path("", include("notifications.urls")),
 ]

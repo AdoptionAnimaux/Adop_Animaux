@@ -84,11 +84,11 @@
     }
 
     const token = localStorage.getItem('access_token');
-    if (!token) window.location.href = 'http://127.0.0.1:8001/login/';
+    if (!token) window.location.href = '/accounts/login/';
 
     async function loadNotifications() {
         try {
-            const response = await fetch('/api/notifications/', {
+            const response = await fetch('/notifications/api/notifications/', {
                 headers: { 'Authorization': 'Bearer ' + token }
             });
 

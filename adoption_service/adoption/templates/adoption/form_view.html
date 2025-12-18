@@ -81,7 +81,7 @@
         <button type="submit" class="btn">Submit Request</button>
     </form>
 
-    <a href="http://127.0.0.1:8002/" class="back">Cancel & Back to Catalog</a>
+    <a href="/animals/" class="back">Cancel & Back to Catalog</a>
 </div>
 
 <script>
@@ -109,7 +109,7 @@
     // Auth Check
     const token = localStorage.getItem('access_token');
     if (!token) {
-        window.location.href = 'http://127.0.0.1:8001/login/';
+        window.location.href = '/accounts/login/';
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -121,7 +121,7 @@
         const reason = document.getElementById('reason').value;
 
         try {
-            const response = await fetch('/api/client/create/', {
+            const response = await fetch('/adoption/client/create/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -135,7 +135,7 @@
 
             if (response.ok) {
                 alert('Adoption Request Submitted Successfully!');
-                window.location.href = 'http://127.0.0.1:8002/'; // Back to catalog
+                window.location.href = '/animals/'; // Back to catalog
             } else {
                 const err = await response.json();
                 alert('Error: ' + JSON.stringify(err));

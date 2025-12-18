@@ -13,7 +13,6 @@ def root_view(request):
 
 
 urlpatterns = [
-    path('animals/', include('animals.urls')), # For Traefik /animals/ routing
-    path('', include('animals.urls')), # Custom URLs first to catch 'admin/animals/'
+    path('', include('animals.urls')), # All routes without prefix (Traefik strips /animals)
     path('admin/', admin.site.urls),
 ]

@@ -15,8 +15,5 @@ def root_view(request):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("adoption.urls")),
-    path("adoption/api/", include("adoption.urls")), # Handle /adoption/api/...
-    path("adoption/", include("adoption.urls")), # Expose UI under /adoption/... (e.g. /adoption/create/)
-    path("", root_view),
+    path("", include("adoption.urls")), # All routes without prefix (Traefik strips /adoption)
 ]

@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-=&96#t4&pcgu(48@obm3x@(0&!o2d^q*=_m7)++-^i9mh*s5c5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/animals'
 
 
 # Application definition

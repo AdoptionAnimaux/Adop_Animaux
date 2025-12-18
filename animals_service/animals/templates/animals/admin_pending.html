@@ -4,229 +4,247 @@
 
 {% block title %}Animals Admin Dashboard{% endblock %}
 {% block content %}
-    <style>
-        /* Re-use same style system as admin_manage for consistency */
-        :root {
-            --brown: #7F5539;
-            --light-brown: #A68A64;
-            --cream: #EDE0D4;
-            --olive: #656D4A;
-            --dark-olive: #414833;
-            --muted-olive: rgba(101, 109, 74, 0.8);
-            --muted-brown: rgba(127, 85, 57, 0.85);
-            --radius-md: 14px;
-            --radius-sm: 8px;
-            --shadow-soft: 0 18px 45px rgba(33, 37, 26, 0.18);
-            --transition: all 0.2s ease;
-        }
+<style>
+    /* Re-use same style system as admin_manage for consistency */
+    :root {
+        --brown: #7F5539;
+        --light-brown: #A68A64;
+        --cream: #EDE0D4;
+        --olive: #656D4A;
+        --dark-olive: #414833;
+        --muted-olive: rgba(101, 109, 74, 0.8);
+        --muted-brown: rgba(127, 85, 57, 0.85);
+        --radius-md: 14px;
+        --radius-sm: 8px;
+        --shadow-soft: 0 18px 45px rgba(33, 37, 26, 0.18);
+        --transition: all 0.2s ease;
+    }
 
-        * { box-sizing: border-box; }
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-            background: radial-gradient(circle at top left, #EDE0D4 0, #D8C3A5 35%, #B08968 80%);
-            color: var(--dark-olive);
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+        background: radial-gradient(circle at top left, #EDE0D4 0, #D8C3A5 35%, #B08968 80%);
+        color: var(--dark-olive);
+    }
 
-        .admin-shell { min-height: 100vh; display: flex; flex-direction: column; }
+    .admin-shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .admin-main {
-            flex: 1;
-            padding: 26px;
-            display: flex;
-            justify-content: center;
-        }
+    .admin-main {
+        flex: 1;
+        padding: 26px;
+        display: flex;
+        justify-content: center;
+    }
 
+    .admin-inner {
+        width: 100%;
+        max-width: 1000px;
+        background: rgba(253, 250, 245, 0.96);
+        border-radius: 24px;
+        padding: 24px 24px 26px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(127, 85, 57, 0.16);
+        backdrop-filter: blur(16px);
+    }
+
+    h1 {
+        margin: 0 0 6px;
+        font-size: 1.5rem;
+        letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+        margin: 0 0 18px;
+        font-size: 0.9rem;
+        color: var(--muted-olive);
+    }
+
+    .pill-warning {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: rgba(198, 148, 71, 0.10);
+        border: 1px solid rgba(198, 148, 71, 0.45);
+        font-size: 0.78rem;
+        color: #7A5B2D;
+        margin-bottom: 10px;
+    }
+
+    .table-wrap {
+        margin-top: 4px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(127, 85, 57, 0.18);
+        background: rgba(255, 255, 255, 0.98);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.87rem;
+    }
+
+    thead {
+        background: rgba(237, 224, 212, 0.85);
+    }
+
+    th,
+    td {
+        padding: 10px 14px;
+        text-align: left;
+    }
+
+    th {
+        font-weight: 500;
+        color: var(--dark-olive);
+        border-bottom: 1px solid rgba(127, 85, 57, 0.2);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    tbody tr:nth-child(even) {
+        background: rgba(248, 244, 239, 0.65);
+    }
+
+    tbody tr:hover {
+        background: rgba(237, 224, 212, 0.7);
+    }
+
+    td {
+        border-bottom: 1px solid rgba(127, 85, 57, 0.12);
+        color: var(--muted-olive);
+    }
+
+    .actions-cell {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-small {
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+        border: 1px solid rgba(65, 72, 51, 0.26);
+        background: rgba(250, 245, 239, 0.9);
+        color: var(--dark-olive);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-small:hover {
+        background: #ffffff;
+        border-color: rgba(65, 72, 51, 0.5);
+    }
+
+    .btn-approve {
+        border-color: rgba(101, 155, 108, 0.5);
+        background: rgba(101, 155, 108, 0.10);
+        color: #305a34;
+    }
+
+    .btn-reject {
+        border-color: rgba(193, 80, 80, 0.4);
+        background: rgba(193, 80, 80, 0.08);
+        color: #8b2f2f;
+    }
+
+    @media (max-width: 720px) {
         .admin-inner {
-            width: 100%;
-            max-width: 1000px;
-            background: rgba(253, 250, 245, 0.96);
-            border-radius: 24px;
-            padding: 24px 24px 26px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(127, 85, 57, 0.16);
-            backdrop-filter: blur(16px);
-        }
-
-        h1 {
-            margin: 0 0 6px;
-            font-size: 1.5rem;
-            letter-spacing: -0.03em;
-        }
-
-        .subtitle {
-            margin: 0 0 18px;
-            font-size: 0.9rem;
-            color: var(--muted-olive);
-        }
-
-        .pill-warning {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 9px;
-            border-radius: 999px;
-            background: rgba(198, 148, 71, 0.10);
-            border: 1px solid rgba(198, 148, 71, 0.45);
-            font-size: 0.78rem;
-            color: #7A5B2D;
-            margin-bottom: 10px;
-        }
-
-        .table-wrap {
-            margin-top: 4px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(127, 85, 57, 0.18);
-            background: rgba(255, 255, 255, 0.98);
+            padding: 18px;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.87rem;
-        }
-
-        thead {
-            background: rgba(237, 224, 212, 0.85);
-        }
-
-        th, td {
-            padding: 10px 14px;
-            text-align: left;
-        }
-
-        th {
-            font-weight: 500;
-            color: var(--dark-olive);
-            border-bottom: 1px solid rgba(127, 85, 57, 0.2);
             font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
         }
 
-        tbody tr:nth-child(even) {
-            background: rgba(248, 244, 239, 0.65);
-        }
-
-        tbody tr:hover {
-            background: rgba(237, 224, 212, 0.7);
-        }
-
+        th,
         td {
-            border-bottom: 1px solid rgba(127, 85, 57, 0.12);
-            color: var(--muted-olive);
+            padding: 8px 10px;
         }
-
-        .actions-cell {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-small {
-            border-radius: 999px;
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            border: 1px solid rgba(65, 72, 51, 0.26);
-            background: rgba(250, 245, 239, 0.9);
-            color: var(--dark-olive);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-small:hover {
-            background: #ffffff;
-            border-color: rgba(65, 72, 51, 0.5);
-        }
-
-        .btn-approve {
-            border-color: rgba(101, 155, 108, 0.5);
-            background: rgba(101, 155, 108, 0.10);
-            color: #305a34;
-        }
-
-        .btn-reject {
-            border-color: rgba(193, 80, 80, 0.4);
-            background: rgba(193, 80, 80, 0.08);
-            color: #8b2f2f;
-        }
-
-        @media (max-width: 720px) {
-            .admin-inner {
-                padding: 18px;
-            }
-            table { font-size: 0.8rem; }
-            th, td { padding: 8px 10px; }
-        }
-    </style>
+    }
+</style>
 </head>
+
 <body>
-<div class="admin-shell">
+    <div class="admin-shell">
 
-    <main class="admin-main">
-        <section class="admin-inner">
-            <h1>Animals waiting for approval</h1>
-            <p class="subtitle">These animals have been proposed by users and are not visible in the public catalog yet.</p>
+        <main class="admin-main">
+            <section class="admin-inner">
+                <h1>Animals waiting for approval</h1>
+                <p class="subtitle">These animals have been proposed by users and are not visible in the public catalog
+                    yet.</p>
 
-            <div class="pill-warning">
-                ⚠ You must approve an animal before it becomes available for adoption.
-            </div>
+                <div class="pill-warning">
+                    ⚠ You must approve an animal before it becomes available for adoption.
+                </div>
 
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Age</th>
-                        <th>Location</th>
-                        <th>Submitted</th>
-                        <th style="width: 160px;">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for a in animals %}
-                        <tr>
-                            <td>{{ a.name }}</td>
-                            <td>{{ a.type }}</td>
-                            <td>{{ a.age }}</td>
-                            <td>{{ a.location }}</td>
-                            <td>{{ a.created_at|date:"Y-m-d H:i" }}</td>
-                            <td>
-                                <div class="actions-cell">
-                                    <form method="post" action="/api/admin/animals/{{ a.id }}/approve/">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-small btn-approve">
-                                            Approve
-                                        </button>
-                                    </form>
-                                    <form method="post" action="/api/admin/animals/{{ a.id }}/reject/">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-small btn-reject">
-                                            Reject
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="6">No pending animals at the moment 🎉</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Age</th>
+                                <th>Location</th>
+                                <th>Submitted</th>
+                                <th style="width: 160px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in animals %}
+                            <tr>
+                                <td>{{ a.name }}</td>
+                                <td>{{ a.type }}</td>
+                                <td>{{ a.age }}</td>
+                                <td>{{ a.location }}</td>
+                                <td>{{ a.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <form method="post"
+                                            action="/animals/api/admin-panel/animals/{{ a.id }}/approve/">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-small btn-approve">
+                                                Approve
+                                            </button>
+                                        </form>
+                                        <form method="post"
+                                            action="/animals/api/admin-panel/animals/{{ a.id }}/reject/">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-small btn-reject">
+                                                Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6">No pending animals at the moment 🎉</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-        </section>
-    </main>
-</div>
+            </section>
+        </main>
+    </div>
 </body>
 {% endblock %}

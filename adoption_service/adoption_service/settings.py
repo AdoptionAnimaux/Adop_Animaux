@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-!e^$%sa!34yzt^+3orbinabf4@n+b&8-w^+ly5$sm@ff6evkuo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = '/adoption'
 
 
 # Application definition

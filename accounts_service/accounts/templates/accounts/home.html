@@ -13,12 +13,12 @@
         const user = JSON.parse(localStorage.getItem('user_info') || '{}');
 
         if (!token) {
-            window.location.href = '/login/';
+            window.location.href = '/accounts/login/';
         } else {
             if (user.is_admin) {
-                window.location.href = '/admin-panel/';
+                window.location.href = '/accounts/admin-panel/';
             } else {
-                window.location.href = '/profile/';
+                window.location.href = '/accounts/profile/';
             }
         }
     </script>

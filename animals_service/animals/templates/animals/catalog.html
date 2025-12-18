@@ -220,7 +220,7 @@
 
 
 <script>
-    const API_URL = '/api/animals/';
+    const API_URL = '/animals/api/animals/';
 
     // --- AUTH & COOKIE BRIDGE ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -257,7 +257,7 @@
     const user = JSON.parse(localStorage.getItem('user_info') || '{}');
 
     if (!token) {
-        window.location.href = 'http://127.0.0.1:8001/login/';
+        window.location.href = '/accounts/login/';
     }
 
     document.getElementById('userInfo').innerText = 'Hello, ' + (user.firstname || 'User');
@@ -265,7 +265,7 @@
     function logout() {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = 'http://127.0.0.1:8001/login/';
+        window.location.href = '/accounts/login/';
     }
 
     // --- DATA LOADING ---
@@ -393,7 +393,7 @@
         }
 
         // Redirect
-        window.location.href = `http://127.0.0.1:8003/adoption/create/?animal_id=${animalId}`;
+        window.location.href = `/adoption/create/?animal_id=${animalId}`;
     }
 
     loadAnimals();

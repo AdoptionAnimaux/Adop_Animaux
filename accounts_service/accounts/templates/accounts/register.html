@@ -155,7 +155,7 @@
         </form>
 
         <p class="bottom">
-            Already have an account? <a href="/login/">Login here</a>
+            Already have an account? <a href="/accounts/login/">Login here</a>
         </p>
 
     </div>
@@ -172,7 +172,7 @@
             const lastname = document.getElementById('lastname').value;
 
             try {
-                const response = await fetch('/api/register/', {
+                const response = await fetch('/accounts/api/register/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, firstname, lastname })
@@ -182,7 +182,7 @@
 
                 if (response.ok) {
                     alert('Account created! Redirecting to login...');
-                    window.location.href = '/login/';
+                    window.location.href = '/accounts/login/';
                 } else {
                     alertBox.textContent = JSON.stringify(data.email || data.password || 'Error creating account');
                     alertBox.style.display = 'block';
