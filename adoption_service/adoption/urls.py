@@ -13,7 +13,7 @@ urlpatterns = [
     path("client/<int:id>/status/", views.request_status, name="request_status"),
     path("client/<int:id>/cancel/", views.cancel_request, name="cancel_request"),
 
-    # Admin
+    # Admin (Standardized for Frontend)
     path("admin-panel/requests/", views.admin_list, name="admin_list"),
     path("admin-panel/requests/<int:id>/approve/", views.approve_request, name="approve_request"),
     path("admin-panel/requests/<int:id>/reject/", views.reject_request, name="reject_request"),
