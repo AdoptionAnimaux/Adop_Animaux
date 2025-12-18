@@ -15,5 +15,6 @@ def root_view(request):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/", include("adoption.urls")), # Fallback for /api/ links
     path("", include("adoption.urls")), # All routes without prefix (Traefik strips /adoption)
 ]

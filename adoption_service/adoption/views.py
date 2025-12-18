@@ -95,9 +95,9 @@ def cancel_request(request, id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def admin_list(request):
-    # Check strict permission
-    if not request.user.has_perm("adoption.view_adoptionrequest"):
-        raise PermissionDenied("Permission view_adoptionrequest required")
+    # Check strict permission using is_superuser derived from JWT is_admin claim
+    if not getattr(request.user, 'is_superuser', False):
+        raise PermissionDenied("Admin permission required")
 
     qs = AdoptionRequest.objects.all()
     serializer = AdoptionRequestSerializer(qs, many=True)
