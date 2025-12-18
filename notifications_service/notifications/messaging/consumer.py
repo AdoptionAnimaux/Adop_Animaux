@@ -36,6 +36,7 @@ def callback(ch, method, properties, body):
     Notification.objects.create(
         user_id=data["user_id"],
         animal_id=data["animal_id"],
+        event=data.get("event", "unknown"),
         message=msg,
     )
 
