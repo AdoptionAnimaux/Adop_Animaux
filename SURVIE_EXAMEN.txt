@@ -22,6 +22,30 @@ Notez l'adresse IPv4 (ex: 192.168.1.10). On l'appellera "IP_LEADER".
    Ouvrez http://localhost:8500/ui -> Vous devez voir "leader".
 
 -----------------------------------------------------------
+🐇 RABBITMQ & NOTIFICATIONS (PC 3)
+---------------------------------------------------------
+1. Créer l'utilisateur spécial (DÉBLOQUE TOUT) :
+   > Ouvrez le 'RabbitMQ Command Prompt' et tapez :
+   rabbitmqctl add_user micro micro
+   rabbitmqctl set_user_tags micro administrator
+   rabbitmqctl set_permissions -p / micro ".*" ".*" ".*"
+
+2. Lancer le consommateur :
+   $env:RABBITMQ_HOST="localhost"
+   python manage.py run_consumer
+
+---------------------------------------------------------
+🐾 ADOPTION (PC 2)
+---------------------------------------------------------
+$env:CONSUL_HOST="192.168.239.72"      # IP PC 1
+$env:RABBITMQ_HOST="192.168.239.253"  # IP PC 3
+python manage.py runserver 0.0.0.0:8003x
+
+Exemple pour Animals (PC 2) :
+   $env:CONSUL_HOST="192.168.1.10"
+   python manage.py runserver 0.0.0.0:8002
+
+-----------------------------------------------------------
 💻 SUR LES PC WORKERS (Microservices)
 -----------------------------------------------------------
 Pour CHAQUE service (Accounts, Animals, Adoption, Notifications) :
@@ -31,10 +55,6 @@ Pour CHAQUE service (Accounts, Animals, Adoption, Notifications) :
 
 2. Lancer le service sur toutes les interfaces :
    python manage.py runserver 0.0.0.0:800x
-
-Exemple pour Animals (PC 2) :
-   $env:CONSUL_HOST="192.168.1.10"
-   python manage.py runserver 0.0.0.0:8002
 
 -----------------------------------------------------------
 ⚠️ SI ÇA NE MARCHE PAS (DÉPANNAGE)
