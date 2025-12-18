@@ -21,4 +21,9 @@ urlpatterns = [
     # Inter-service
     path("check/<int:user_id>/<int:animal_id>/", views.check_adoption, name="check_adoption"),
     path("health/", views.health, name="health"),
+    path(
+    "admin-panel/requests/<int:id>/approve/",
+    views.approve_request_ui,
+),
+
 ]
