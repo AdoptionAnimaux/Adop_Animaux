@@ -113,7 +113,7 @@ def approve_request(request, id):
     adoption = get_object_or_404(AdoptionRequest, pk=id)
     adoption.status = "approved"
     adoption.save()
-
+    print("🔥 APPROVE REQUEST CALLED")
     publish_adoption({
         "event": "adoption_approved",
         "request_id": adoption.id,
