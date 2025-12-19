@@ -5,5 +5,14 @@ class AnimalsConfig(AppConfig):
     name = 'animals'
 
     def ready(self):
-        from animals_service.consul import register_service
-        register_service()
+        import os
+        import sys
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        sys.path.append(os.path.join(current_path, "..", ".."))
+
+        from shared.consul_client import register_service
+        register_service(
+            name="animals-service",
+            port=8002,
+            prefix="animals"
+        )

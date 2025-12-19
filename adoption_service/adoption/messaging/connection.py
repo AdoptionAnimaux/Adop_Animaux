@@ -2,7 +2,7 @@ import os
 import pika
 
 def get_connection():
-    credentials = pika.PlainCredentials("micro", "micro")
+    credentials = pika.PlainCredentials("guest", "guest")
     params = pika.ConnectionParameters(
         host = os.environ.get("RABBITMQ_HOST", "localhost"),
         port=5672,

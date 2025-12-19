@@ -8,22 +8,8 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'animals_service.settings')
 
-    # --- Consul Registration ---
-    if "runserver" in sys.argv:
-        try:
-            # Add project root to sys.path to allow importing 'shared'
-            current_path = os.path.dirname(os.path.abspath(__file__))
-            sys.path.append(os.path.join(current_path, ".."))
+    # --- Consul Registration is now handled in apps.py ---
 
-            from shared.consul_client import register_service
-            register_service(
-                name="animals-service",
-                port=8002,
-                prefix="animals"
-            )
-        except Exception as e:
-            print(f"⚠️ Warning: Could not register with Consul: {e}")
-    # ---------------------------
 
     try:
         from django.core.management import execute_from_command_line

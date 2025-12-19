@@ -7,6 +7,8 @@ CONSUL_PORT = 8500
 
 
 def get_my_ip():
+    if os.environ.get("USE_LOCALHOST", "false").lower() == "true":
+        return "127.0.0.1"
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         s.connect(("8.8.8.8", 80))
