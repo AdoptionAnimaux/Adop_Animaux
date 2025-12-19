@@ -1,5 +1,5 @@
 import json
-from .connection import get_connection   # ✅ tu avais oublié ceci
+from .connection import get_connection
 
 def publish_adoption(data):
     try:

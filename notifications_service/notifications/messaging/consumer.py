@@ -1,64 +1,61 @@
 import json
-
 from notifications.models import Notification
 from .connection import get_connection
 
 
 def callback(ch, method, properties, body):
-    """Callback RabbitMQ pour traiter les événements d’adoption."""
+    """
+    Callback RabbitMQ pour traiter les événements d’adoption
+    """
+    print("🔥 MESSAGE ARRIVÉ BRUT :", body)
 
-    data = json.loads(body)
-    print("[Consumer] Received:", data)
-
-    # Vérifier que le message contient les informations nécessaires
-    if "user_id" not in data or "animal_id" not in data:
-        print("⚠ Ignoring message (invalid format)")
+    try:
+        data = json.loads(body)
+    except Exception as e:
+        print("❌ ERREUR JSON :", e)
         return
 
-    animal_name = data.get("animal_name", f"References #{data['animal_id']}")
+    print("📩 MESSAGE PARSÉ :", data)
 
-    # Construire le message à afficher
-    msg = ""
-    if data["event"] == "adoption_approved":
-        msg = (
-            f"Votre demande d'adoption de l'animal "
-            f"{animal_name} a été ACCEPTÉE 🎉"
-        )
-    elif data["event"] == "adoption_rejected":
-        msg = (
-            f"Votre demande d'adoption de l'animal "
-            f"{animal_name} a été REFUSÉE ❌"
-        )
+    # Vérification minimale
+    if "user_id" not in data or "animal_id" not in data:
+        print("⚠ Message ignoré (format invalide)")
+        return
+
+    animal_name = data.get("animal_name", f"Animal #{data['animal_id']}")
+
+    if data.get("event") == "adoption_approved":
+        message = f"Votre demande d'adoption de {animal_name} a été ACCEPTÉE 🎉"
+    elif data.get("event") == "adoption_rejected":
+        message = f"Votre demande d'adoption de {animal_name} a été REFUSÉE ❌"
     else:
-        msg = f"Notification reçue : {data}"
+        message = f"Nouvelle notification : {data}"
 
-    # Sauvegarder la notification en base
+    # Sauvegarde en base
     Notification.objects.create(
         user_id=data["user_id"],
         animal_id=data["animal_id"],
         event=data.get("event", "unknown"),
-        message=msg,
+        message=message,
     )
 
-    print("📩 Notification saved in database.")
+    print("✅ Notification sauvegardée en base")
 
 
 def start_consumer():
-    """Démarre le consumer RabbitMQ pour le service notifications."""
-
     print("[INFO] Starting notifications RabbitMQ consumer...")
 
     connection, channel = get_connection()
 
     channel.queue_declare(
         queue="adoption_queue",
-        durable=True,
+        durable=True
     )
 
     channel.basic_consume(
         queue="adoption_queue",
         on_message_callback=callback,
-        auto_ack=True,
+        auto_ack=True
     )
 
     print("[Consumer] Waiting for messages...")

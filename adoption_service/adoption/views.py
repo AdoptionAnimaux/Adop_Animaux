@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 from .models import AdoptionRequest
 from .serializers import AdoptionRequestSerializer
@@ -113,7 +113,7 @@ def approve_request(request, id):
     adoption = get_object_or_404(AdoptionRequest, pk=id)
     adoption.status = "approved"
     adoption.save()
-
+    print("🔥 APPROVE REQUEST CALLED")
     publish_adoption({
         "event": "adoption_approved",
         "request_id": adoption.id,
@@ -169,3 +169,22 @@ def check_adoption(request, user_id, animal_id):
         return Response({"status": req.status})
     except AdoptionRequest.DoesNotExist:
         return Response({"status": "none"})
+
+
+def approve_request_ui(request, id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        raise PermissionDenied("Admin only")
+
+    adoption = get_object_or_404(AdoptionRequest, pk=id)
+    adoption.status = "approved"
+    adoption.save()
+
+
+    publish_adoption({
+        "event": "adoption_approved",
+        "request_id": adoption.id,
+        "user_id": adoption.user_id,
+        "animal_id": adoption.animal_id,
+    })
+
+    return redirect("/admin-panel/requests/")

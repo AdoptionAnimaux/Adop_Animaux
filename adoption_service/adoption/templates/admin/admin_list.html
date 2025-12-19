@@ -40,10 +40,12 @@
 
             <td class="d-flex gap-2">
                 {% if r.status == "pending" %}
-                    <a href="/adoption/admin/approve/{{ r.id }}/" 
-                       class="btn btn-success btn-sm">
-                        ✔ Accepter
-                    </a>
+                    <a href="/admin-panel/requests/{{ r.id }}/approve/"
+   class="btn btn-success btn-sm">
+   ✔ Accepter
+</a>
+
+
 
                     <a href="/adoption/admin/reject/{{ r.id }}/" 
                        class="btn btn-danger btn-sm">
